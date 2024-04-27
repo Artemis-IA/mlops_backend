@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  mlflow:
+    build:
+      context: ./mlflow 
+      dockerfile: Dockerfile_mlflow
+    ports:
+      - "${MLFLOW_PORT}:5000"
+    volumes:
+      - ./mlflow:/mlflow
+
+  postgres:
+    image: postgres:12
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT}:5432"
+
+  minio:
+    image: minio/minio
+    volumes:
+      - minio-data:/data
+    ports:
+      - "${MINIO_PORT}:9000"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    command: server /data
+
+  minio-client:
+    build:
+      context: ./mc
+      dockerfile: Dockerfile_minio_client
+    depends_on:
+      - minio
+
+  label-studio:
+    image: heartexlabs/label-studio:latest
+    ports:
+      - "${LABEL_STUDIO_PORT}:8080"
+    environment:
+      DJANGO_SUPERUSER_USERNAME: ${LABEL_STUDIO_USERNAME}
+      DJANGO_SUPERUSER_EMAIL: ${LABEL_STUDIO_SUPERUSER_EMAIL}
+      DJANGO_SUPERUSER_PASSWORD: ${LABEL_STUDIO_PASSWORD}
+    volumes:
+      - label-studio-data:/label-studio/data
+
+volumes:
+  postgres-data:
+  minio-data:
+  label-studio-data:
+
+networks:
+  default:
+    driver: bridge
