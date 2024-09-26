@@ -1,17 +1,26 @@
-version: '3.8'
+# Docker-compose file for MLFLOW server (docker compose v2)
 
 services:
   mlflow:
     build:
-      context: ./mlflow 
-      dockerfile: Dockerfile_mlflow
+      context: ./mlflow
+      dockerfile: Dockerfile
     ports:
       - "${MLFLOW_PORT}:5000"
+    environment:
+      MLFLOW_BACKEND_STORE_URI: ${MLFLOW_BACKEND_STORE_URI}
+      MLFLOW_ARTIFACT_ROOT: ${MLFLOW_ARTIFACT_ROOT}
+      MLFLOW_S3_ENDPOINT_URL: ${MLFLOW_S3_ENDPOINT_URL}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
+    env_file:
+      - .env
     volumes:
       - ./mlflow:/mlflow
 
   postgres:
-    image: postgres:12
+    image: postgres:latest
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -19,10 +28,10 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
     ports:
-      - "${POSTGRES_PORT}:5432"
+      - "${POSTGRES_PORT}:5433"
 
   minio:
-    image: minio/minio
+    image: minio/minio:latest
     volumes:
       - minio-data:/data
     ports:
@@ -34,21 +43,27 @@ services:
 
   minio-client:
     build:
-      context: ./mc
-      dockerfile: Dockerfile_minio_client
+      context: ./minio-client
+      dockerfile: Dockerfile
     depends_on:
       - minio
 
   label-studio:
-    image: heartexlabs/label-studio:latest
+    build:
+      context: ./label-studio
+      dockerfile: Dockerfile
     ports:
       - "${LABEL_STUDIO_PORT}:8080"
     environment:
       DJANGO_SUPERUSER_USERNAME: ${LABEL_STUDIO_USERNAME}
       DJANGO_SUPERUSER_EMAIL: ${LABEL_STUDIO_SUPERUSER_EMAIL}
       DJANGO_SUPERUSER_PASSWORD: ${LABEL_STUDIO_PASSWORD}
+      SECRET_KEY: ${SECRET_KEY}
+    env_file:
+      - .env
     volumes:
       - label-studio-data:/label-studio/data
+
 
 volumes:
   postgres-data:
