@@ -1,35 +1,33 @@
 #!/bin/bash
 
-# Démarrer Label Studio en arrière-plan
+# Start Label Studio in the background
 label-studio &
 
-# Attendre que Label Studio soit entièrement démarré
-sleep 20  # Augmenter le délai pour s'assurer que tout est prêt
+# Wait for Label Studio to be fully started (increase delay if necessary)
+sleep 30
 
-# Vérifier si l'utilisateur admin existe
-label-studio shell -c "
-from users.models import User;
-if not User.objects.filter(username='$DJANGO_SUPERUSER_USERNAME').exists():
-    User.objects.create_superuser('$DJANGO_SUPERUSER_USERNAME', '$DJANGO_SUPERUSER_EMAIL', '$DJANGO_SUPERUSER_PASSWORD');
-"
+echo "Checking if the admin user exists..."
 
-# Récupérer la clé API du superutilisateur
-API_KEY=$(label-studio shell -c "
-from users.models import User;
-user = User.objects.get(username='$DJANGO_SUPERUSER_USERNAME');
-print(user.auth_token.key);
-")
+# Create the superuser using label-studio's user creation method
+label-studio user --username "$DJANGO_SUPERUSER_USERNAME" --password "$DJANGO_SUPERUSER_PASSWORD" || {
+    echo "Error: Failed to create or verify the superuser"
+    exit 1
+}
 
-# Vérifier si la clé API a bien été générée
+# Fetch the API key for the superuser
+echo "Fetching the API key for the superuser..."
+API_KEY=$(label-studio user --username "$DJANGO_SUPERUSER_USERNAME" | grep 'token' | awk '{print $2}')
+
+# Verify if the API key has been generated
 if [ -z "$API_KEY" ]; then
-  echo "Erreur : Impossible de récupérer la clé API pour l'utilisateur $DJANGO_SUPERUSER_USERNAME"
+  echo "Error: Unable to retrieve the API key for user $DJANGO_SUPERUSER_USERNAME"
   exit 1
 fi
 
-# Afficher la clé API pour vérification
-echo "Clé API générée : $API_KEY"
+# Display the generated API key
+echo "API key generated: $API_KEY"
 
-# Créer un fichier JSON avec la clé API
+# Save the API key in a JSON file
 API_JSON=$(cat <<EOF
 {
   "username": "$DJANGO_SUPERUSER_USERNAME",
@@ -38,11 +36,8 @@ API_JSON=$(cat <<EOF
 EOF
 )
 
-# Sauvegarder le fichier JSON dans le répertoire courant
 echo "$API_JSON" > ./label_studio_api_key.json
+echo "The API key has been saved to ./label_studio_api_key.json"
 
-# Afficher le chemin du fichier JSON
-echo "La clé API a été sauvegardée dans le fichier ./label_studio_api_key.json"
-
-# Garder le service Label Studio en avant-plan pour éviter que le container ne s'arrête
+# Keep Label Studio running in the foreground
 wait

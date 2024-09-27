@@ -11,7 +11,7 @@ COPY entrypoint.sh /entrypoint_label_studio.sh
 RUN chmod +x /entrypoint_label_studio.sh
 
 # Revenir à l'utilisateur par défaut de l'image (si nécessaire)
-USER 1001
+# USER 1001
 
 
 ENTRYPOINT ["/entrypoint_label_studio.sh"]
