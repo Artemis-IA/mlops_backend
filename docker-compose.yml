@@ -1,12 +1,10 @@
-# Docker-compose file for MLFLOW server (docker compose v2)
-
 services:
   mlflow:
     build:
       context: ./mlflow
       dockerfile: Dockerfile
     ports:
-      - "${MLFLOW_PORT}:5000"
+      - "${MLFLOW_PORT}:${MLFLOW_PORT}"
     environment:
       MLFLOW_BACKEND_STORE_URI: ${MLFLOW_BACKEND_STORE_URI}
       MLFLOW_ARTIFACT_ROOT: ${MLFLOW_ARTIFACT_ROOT}
@@ -18,6 +16,8 @@ services:
       - .env
     volumes:
       - ./mlflow:/mlflow
+    networks:
+      - shared-network
 
   postgres:
     image: postgres:latest
@@ -28,18 +28,22 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
     ports:
-      - "${POSTGRES_PORT}:5433"
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    networks:
+      - shared-network
 
   minio:
     image: minio/minio:latest
     volumes:
       - minio-data:/data
     ports:
-      - "${MINIO_PORT}:9000"
+      - "${MINIO_PORT}:${MINIO_PORT}"
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     command: server /data
+    networks:
+      - shared-network
 
   minio-client:
     build:
@@ -47,30 +51,34 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - minio
-
+    networks:
+      - shared-network
+      
   label-studio:
     build:
       context: ./label-studio
       dockerfile: Dockerfile
     ports:
-      - "${LABEL_STUDIO_PORT}:8080"
+      - "${LABEL_STUDIO_PORT}:${LABEL_STUDIO_PORT}"
     environment:
       DJANGO_SUPERUSER_USERNAME: ${LABEL_STUDIO_USERNAME}
       DJANGO_SUPERUSER_EMAIL: ${LABEL_STUDIO_SUPERUSER_EMAIL}
-      DJANGO_SUPERUSER_PASSWORD: ${LABEL_STUDIO_PASSWORD}
+      DJANGO_SUPERUSER_PASSWORD: ${LABEL_STUDIO_SUPERUSER_PASSWORD}
       SECRET_KEY: ${SECRET_KEY}
       LABEL_STUDIO_API_KEY: ${LABEL_STUDIO_API_KEY}
     env_file:
       - .env
     volumes:
       - label-studio-data:/label-studio/data
-
+    networks:
+      - shared-network
 
 volumes:
   postgres-data:
   minio-data:
   label-studio-data:
+  mlflow-data:
 
 networks:
-  default:
+  shared-network:
     driver: bridge
