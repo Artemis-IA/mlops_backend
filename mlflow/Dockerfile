@@ -1,15 +1,11 @@
-# # Dockerfile_mlflow
-# Utilisation de l'image de base MLflow
+# # mlflow/Dockerfile
 FROM ghcr.io/mlflow/mlflow:latest
 
-# Installation de psycopg2 pour PostgreSQL et autres dépendances sécuritaires
 RUN pip install psycopg2-binary numpy pandas scikit-learn
 
-# Copie du script de démarrage
+# COPY wait-for-it.sh /wait-for-it.sh
 COPY entrypoint.sh /entrypoint_mlflow.sh
 
-# Rendre le script exécutable
-RUN chmod +x /entrypoint_mlflow.sh
+# RUN chmod +x /wait-for-it.sh /entrypoint_mlflow.sh
 
-# Point d'entrée
 ENTRYPOINT ["/entrypoint_mlflow.sh"]

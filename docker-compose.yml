@@ -1,8 +1,55 @@
 services:
+  postgres:
+    container_name: postgres
+    env_file:
+      - .env
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    restart: always
+
+  minio:
+    container_name: minio
+    env_file:
+      - .env
+    image: minio/minio:latest
+    volumes:
+      - minio-data:/data
+    ports:
+      - "${MINIO_PORT}:${MINIO_PORT}"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_API_URL: ${MINIO_API_URL}
+    command: server /data
+    networks:
+      - shared-network
+    restart: always
+
+  minio-client:
+    container_name: minio-client
+    env_file:
+      - .env
+    build:
+      context: ./minio-client
+      dockerfile: Dockerfile
+    depends_on:
+      - minio
+    networks:
+      - shared-network
+
   mlflow:
+    container_name: mlflow
+    env_file:
+      - .env
     build:
       context: ./mlflow
       dockerfile: Dockerfile
+
     ports:
       - "${MLFLOW_PORT}:${MLFLOW_PORT}"
     environment:
@@ -12,49 +59,17 @@ services:
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
-    env_file:
-      - .env
+      MLFLOW_TRACKING_URI: ${MLFLOW_TRACKING_URI}
     volumes:
       - ./mlflow:/mlflow
     networks:
       - shared-network
-
-  postgres:
-    image: postgres:latest
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    ports:
-      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
-    networks:
-      - shared-network
-
-  minio:
-    image: minio/minio:latest
-    volumes:
-      - minio-data:/data
-    ports:
-      - "${MINIO_PORT}:${MINIO_PORT}"
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
-    command: server /data
-    networks:
-      - shared-network
-
-  minio-client:
-    build:
-      context: ./minio-client
-      dockerfile: Dockerfile
     depends_on:
+      - postgres
       - minio
-    networks:
-      - shared-network
-      
+
   label-studio:
+    container_name: label-studio
     build:
       context: ./label-studio
       dockerfile: Dockerfile
@@ -66,12 +81,38 @@ services:
       DJANGO_SUPERUSER_PASSWORD: ${LABEL_STUDIO_SUPERUSER_PASSWORD}
       SECRET_KEY: ${SECRET_KEY}
       LABEL_STUDIO_API_KEY: ${LABEL_STUDIO_API_KEY}
+      MLFLOW_TRACKING_URI: ${MLFLOW_TRACKING_URI}
+      LABEL_STUDIO_BUCKET_NAME: ${LABEL_STUDIO_BUCKET_NAME}
+      LABEL_STUDIO_BUCKET_ENDPOINT_URL: ${LABEL_STUDIO_BUCKET_ENDPOINT_URL}
+      LABEL_STUDIO_BUCKET_ACCESS_KEY: ${LABEL_STUDIO_BUCKET_ACCESS_KEY}
+      LABEL_STUDIO_BUCKET_SECRET_KEY: ${LABEL_STUDIO_BUCKET_SECRET_KEY}
     env_file:
       - .env
     volumes:
       - label-studio-data:/label-studio/data
     networks:
       - shared-network
+    depends_on:
+      - postgres
+      - minio
+      - mlflow
+
+  # ml-backend:
+  #   container_name: ml-backend
+  #   build:
+  #     context: ./ml-backend
+  #     dockerfile: Dockerfile
+  #   environment:
+  #     BASIC_AUTH_USER: ${BASIC_AUTH_USER}
+  #     BASIC_AUTH_PASS: ${BASIC_AUTH_PASS}
+  #     LOG_LEVEL: ${LOG_LEVEL}
+  #     LABEL_STUDIO_URL: ${LABEL_STUDIO_URL}
+  #     LABEL_STUDIO_API_KEY: ${LABEL_STUDIO_API_KEY}
+  #     WORKERS: ${WORKERS}
+  #     THREADS: ${THREADS}
+  #     MODEL_DIR: /data/models
+  #   ports:
+  #     - "${ML_BACKEND_PORT}:${ML_BACKEND_PORT}"
 
 volumes:
   postgres-data:

@@ -1,12 +1,8 @@
-# Dockerfile_minio_client
-# Utilisation de l'image de base MinIO Client
+# minio_client/Dockerfile
 FROM minio/mc
 
-# Copie du script de configuration
 COPY entrypoint.sh /entrypoint_minio_client.sh
 
-# Rendre le script exécutable
 RUN chmod +x /entrypoint_minio_client.sh
 
-# Point d'entrée
 ENTRYPOINT ["/entrypoint_minio_client.sh"]
