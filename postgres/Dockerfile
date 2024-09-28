@@ -1,10 +1,9 @@
-# postgres/Dockerfile
-
+ # postgres/Dockerfile
 FROM postgres:latest
 
 COPY ./init_db.sql /docker-entrypoint-initdb.d/
-COPY ./entrypoint.sh /entrypoint-postgres.sh
 
-RUN chmod +x /entrypoint-postgres.sh
+COPY ./entrypoint.sh /usr/local/bin/entrypoint_postgres.sh
+RUN chmod +x /usr/local/bin/entrypoint_postgres.sh
 
-ENTRYPOINT ["/entrypoint-postgres.sh"]
+ENTRYPOINT ["/usr/local/bin/entrypoint_postgres.sh"]
