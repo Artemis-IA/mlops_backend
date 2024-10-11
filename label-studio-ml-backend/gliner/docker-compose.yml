@@ -1,3 +1,4 @@
+# MLFLOW-server/label-studio-ml-backend/gliner/docker-compose.yml
 services:
   gliner:
     container_name: gliner
@@ -6,10 +7,13 @@ services:
       context: .
       args:
         TEST_ENV: ${TEST_ENV}
+    env_file:
+      - .env
+      # - /home/pi/Documents/IF-SRV/SynologyDrive/MLFLOW-server/.env
     environment:
-      # specify these parameters if you want to use basic auth for the model server
-      - BASIC_AUTH_USER=
-      - BASIC_AUTH_PASS=
+      # Paramètres d'authentification basique si nécessaire
+      - BASIC_AUTH_USER=${GLINER_BASIC_AUTH_USER}
+      - BASIC_AUTH_PASS=${GLINER_BASIC_AUTH_PASS}
       # set the log level for the model server
       - LOG_LEVEL=DEBUG
       # any other parameters that you want to pass to the model server
@@ -25,15 +29,22 @@ services:
       # Do not use 'localhost' as it does not work within Docker containers.
       # Use prefix 'http://' or 'https://' for the URL always.
       # Determine the actual IP using 'ifconfig' (Linux/Mac) or 'ipconfig' (Windows).
-      - LABEL_STUDIO_URL=http://host.docker.internal:8080
-      - LABEL_STUDIO_API_KEY=
+      - LABEL_STUDIO_URL=http://localhost:${LABEL_STUDIO_PORT}
+      - LABEL_STUDIO_API_KEY=${LABEL_STUDIO_API_KEY}
 
     ports:
-      - "9090:9090"
+      - "${MLBACKEND_PORT}:${MLBACKEND_PORT}"
     volumes:
       - "./data/server:/data"
     networks:
       - shared-network
+
+volumes:
+  gliner-data:
+  postgres-data:
+  minio-data:
+  label-studio-data:
+  mlflow-data:
 
 networks:
   shared-network:

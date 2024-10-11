@@ -127,3 +127,5 @@ cython_debug/
 
 # VS Code
 .vscode/
+
+/label-studio-ml-backend/gliner/data/

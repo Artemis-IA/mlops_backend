@@ -27,7 +27,7 @@ class GLiNERModel(LabelStudioMLBase):
     def setup(self):
         """Configure any parameters of your model here
         """
-        self.LABEL_STUDIO_HOST = os.getenv('LABEL_STUDIO_URL', 'http://localhost:8080')
+        self.LABEL_STUDIO_HOST = os.getenv('LABEL_STUDIO_URL', 'http://localhost:${LABEL_STUDIO_PORT')
         self.LABEL_STUDIO_API_KEY = os.getenv('LABEL_STUDIO_API_KEY')
 
         self.set("model_version", f'{self.__class__.__name__}-v0.0.1')
@@ -239,9 +239,9 @@ class GLiNERModel(LabelStudioMLBase):
                 tokens, ner = self.process_training_data(task)
                 training_data.append({"tokenized_text": tokens, "ner": ner})
 
+            from_name, to_name, value = self.label_interface.get_first_tag_occurence('Labels', 'Text')
             eval_data = {
-                "entity_types": sorted(self.label_interface.get_tag(from_name).labels)
-,
+                "entity_types": sorted(self.label_interface.get_tag(from_name).labels),
                 "samples": training_data[:10]
             }
 
