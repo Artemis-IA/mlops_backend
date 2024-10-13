@@ -1,34 +1,6 @@
-# MLFLOW-server/docker-compose.yml
+
 services:
-
-  # fastapi:
-  #   container_name: fastapi
-  #   build:
-  #     context: ./fastapi
-  #     dockerfile: Dockerfile
-  #   env_file:
-  #     - .env
-  #   environment:
-  #     - POSTGRES_USER=${POSTGRES_USER}
-  #     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-  #     - POSTGRES_DB=${POSTGRES_DB}
-  #     - POSTGRES_HOST=${POSTGRES_HOST}
-  #     - POSTGRES_PORT=${POSTGRES_PORT}
-  #     - MINIO_ENDPOINT=${MINIO_ENDPOINT}
-  #     - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
-  #     - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
-  #     - MINIO_BUCKET_NAME=${MINIO_BUCKET_NAME}
-  #     - MLFLOW_TRACKING_URI=${MLFLOW_TRACKING_URI}
-  #   ports:
-  #     - "${FASTAPI_PORT}:${FASTAPI_PORT}"
-  #   networks:
-  #     - shared-network
-  #   depends_on:
-  #     - postgres
-  #     - minio
-  #     - mlflow
-  #   restart: always
-
+  
   postgres:
     container_name: postgres
     build:
@@ -41,9 +13,10 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
+      - ./postgres/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
     networks:
       - shared-network
     restart: always
@@ -66,6 +39,7 @@ services:
       - shared-network
     restart: always
 
+
   minio-client:
     container_name: minio-client
     build:
@@ -73,8 +47,13 @@ services:
       dockerfile: Dockerfile
     env_file:
       - .env
+    environment:
+      - MINIO_ENDPOINT=${MINIO_API_URL}
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
     depends_on:
-      - minio
+      minio:
+        condition: service_started
     networks:
       - shared-network
     restart: always
@@ -101,8 +80,12 @@ services:
     networks:
       - shared-network
     depends_on:
-      - postgres
-      - minio
+      postgres:
+        condition: service_started
+      minio:
+        condition: service_started
+      minio-client:
+        condition: service_started
     restart: always
 
   label-studio:
@@ -114,8 +97,8 @@ services:
       - .env
     environment:
       - DJANGO_SUPERUSER_USERNAME=${LABEL_STUDIO_USERNAME}
-      - DJANGO_SUPERUSER_EMAIL=${LABEL_STUDIO_SUPERUSER_EMAIL}
-      - DJANGO_SUPERUSER_PASSWORD=${LABEL_STUDIO_SUPERUSER_PASSWORD}
+      - DJANGO_SUPERUSER_EMAIL=${LABEL_STUDIO_EMAIL}
+      - DJANGO_SUPERUSER_PASSWORD=${LABEL_STUDIO_PASSWORD}
       - SECRET_KEY=${SECRET_KEY}
       - LABEL_STUDIO_API_KEY=${LABEL_STUDIO_API_KEY}
       - MLFLOW_TRACKING_URI=${MLFLOW_TRACKING_URI}
@@ -130,9 +113,34 @@ services:
     networks:
       - shared-network
     depends_on:
-      - postgres
-      - minio
-      - mlflow
+      postgres:
+        condition: service_started
+      minio:
+        condition: service_started
+      mlflow:
+        condition: service_started
+    restart: always
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    env_file:
+      - .env
+    environment:
+      - LABEL_STUDIO_PORT=${LABEL_STUDIO_PORT}
+      - MLFLOW_PORT=${MLFLOW_PORT}
+    depends_on:
+      label-studio:
+        condition: service_started
+      mlflow:
+        condition: service_started
+    networks:
+      - shared-network
     restart: always
 
 volumes:

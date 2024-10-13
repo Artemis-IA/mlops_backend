@@ -3,7 +3,7 @@
         "AllowedHeaders": ["*"],
         "AllowedMethods": ["GET", "PUT", "POST", "DELETE", "HEAD"],
         "AllowedOrigins": ["*"],
-        "ExposeHeaders": [],
+        "ExposeHeaders": ["ETag"],
         "MaxAgeSeconds": 3000
     }
 ]

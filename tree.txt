@@ -1,0 +1,28 @@
+.
+├── docker-compose.yml
+├── label-studio
+│   ├── Dockerfile
+│   └── entrypoint.sh
+├── minio-client
+│   ├── bucket_upload.py
+│   ├── cors.json
+│   ├── Dockerfile
+│   └── entrypoint.sh
+├── mlflow
+│   ├── Dockerfile
+│   ├── Dockerfile_mlflow
+│   ├── entrypoint_mlflow.sh
+│   ├── entrypoint.sh
+│   └── wait-for-it.sh
+├── nginx
+│   ├── Dockerfile
+│   ├── entrypoint.sh
+│   └── nginx.conf
+├── postgres
+│   ├── Dockerfile
+│   ├── entrypoint.sh
+│   └── init_db.sql
+├── README.md
+└── tree.txt
+
+42 directories, 272 files

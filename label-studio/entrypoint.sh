@@ -1,51 +1,71 @@
 #!/bin/bash
+set -e
 
-# Start Label Studio in the background
-label-studio &
 
-# Wait for Label Studio to start
-sleep 30
-
-# Check if the superuser exists and create if necessary
-label-studio shell -c "
-from users.models import User;
-from rest_framework.authtoken.models import Token;
-
-if not User.objects.filter(username='$LABEL_STUDIO_USERNAME').exists():
-    User.objects.create_superuser('$LABEL_STUDIO_USERNAME', '$LABEL_STUDIO_USER_EMAIL', '$LABEL_STUDIO_PASSWORD')
-    print('Superuser created successfully.')
-else:
-    print('Superuser already exists.')
-
-user = User.objects.get(username='$LABEL_STUDIO_USERNAME')
-token, _ = Token.objects.get_or_create(user=user)
-print(f'API Key for {user.username}: {token.key}')
-" || { echo "Error: Failed to create or verify superuser"; exit 1; }
-
-# Save the API key in a JSON file
-API_KEY=$(label-studio shell -c "
-from users.models import User;
-from rest_framework.authtoken.models import Token;
-user = User.objects.get(username='$LABEL_STUDIO_USERNAME');
-token = Token.objects.get(user=user);
-print(token.key)
-" | tail -n 1)
-
-if [ -z "$API_KEY" ]; then
-  echo "Error: Failed to retrieve API key for user $LABEL_STUDIO_USERNAME"
-  exit 1
+# Charger les variables d'environnement depuis le fichier .env
+if [ -f .env ]; then
+    echo "=> Loading environment variables from .env file"
+    dotenv -f .env
+else
+    echo "=> No .env file found, using default environment variables"
 fi
 
-# Store the API key in a JSON file
-echo "API key generated: $API_KEY"
-cat <<EOF > /label-studio/data/label_studio_api_key.json
-{
-  "username": "$LABEL_STUDIO_USERNAME",
-  "api_key": "$API_KEY"
-}
-EOF
+# Afficher les variables d'environnement
+echo "=> Starting Label Studio with the following environment:"
+echo "   LABEL_STUDIO_USERNAME=${LABEL_STUDIO_USERNAME}"
+echo "   LABEL_STUDIO_PASSWORD=${LABEL_STUDIO_PASSWORD}"
+echo "   LABEL_STUDIO_API_KEY=${LABEL_STUDIO_API_KEY}"
+echo "   LABEL_STUDIO_BUCKET_NAME=${LABEL_STUDIO_BUCKET_NAME}"
+echo "   LABEL_STUDIO_BUCKET_ENDPOINT_URL=${LABEL_STUDIO_BUCKET_ENDPOINT_URL}"
+echo "   LABEL_STUDIO_BUCKET_ACCESS_KEY=${LABEL_STUDIO_BUCKET_ACCESS_KEY}"
+echo "   LABEL_STUDIO_BUCKET_SECRET_KEY=${LABEL_STUDIO_BUCKET_SECRET_KEY}"
+echo "   AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}"
 
-echo "API key saved to /label-studio/data/label_studio_api_key.json"
 
-# Keep Label Studio running
-wait
+# Configurer la base de données et le répertoire des médias
+echo "=> Database and media directory: /label-studio/data"
+
+# Créer un superutilisateur si nécessaire (en démarrant Label Studio en arrière-plan pour configurer l'utilisateur)
+echo "=> Creating superuser if not exists"
+label-studio start --username "${LABEL_STUDIO_USERNAME}" --password "${LABEL_STUDIO_PASSWORD}" --no-browser &
+
+# Attendre que Label Studio soit disponible
+echo "=> Waiting for Label Studio to be available..."
+until curl -s http://localhost:${LABEL_STUDIO_PORT}/ > /dev/null; do
+  echo "Waiting for Label Studio..."
+  sleep 5
+done
+
+# Générer un token pour l'utilisateur admin_user (nécessaire pour l'API)
+echo "=> Generating API token for user ${LABEL_STUDIO_USERNAME}"
+LABEL_STUDIO_USER_TOKEN=$(curl -s -X POST "http://localhost:${LABEL_STUDIO_PORT}/user/token/" \
+  -H "Content-Type: application/json" \
+  -d "{\"username\": \"${LABEL_STUDIO_USERNAME}\", \"password\": \"${LABEL_STUDIO_PASSWORD}\"}" | jq -r '.token')
+
+if [ -z "${LABEL_STUDIO_USER_TOKEN}" ]; then
+  echo "Error: Unable to generate user token. Exiting..."
+  exit 1
+else
+  echo "Successfully generated token: ${LABEL_STUDIO_USER_TOKEN}"
+fi
+
+# Configurer automatiquement MinIO comme stockage via l'API Label Studio
+echo "=> Configuring MinIO as storage for Label Studio"
+curl -X POST "http://localhost:${LABEL_STUDIO_PORT}/api/storages/s3" \
+  -H "Authorization: Token ${LABEL_STUDIO_USER_TOKEN}" \
+  -d "title=${LABEL_STUDIO_BUCKET_NAME}" \
+  -d "bucket=${LABEL_STUDIO_BUCKET_NAME}" \
+  -d "prefix=/" \
+  -d "use_blob_urls=true" \
+  -d "presign=true" \
+  -d "endpoint_url=${LABEL_STUDIO_BUCKET_ENDPOINT_URL}" \
+  -d "access_key=${LABEL_STUDIO_BUCKET_ACCESS_KEY}" \
+  -d "secret_key=${LABEL_STUDIO_BUCKET_SECRET_KEY}" \
+  -d "region=${AWS_DEFAULT_REGION}" || true
+
+# Attendre quelques secondes pour s'assurer que la configuration est appliquée
+sleep 5
+
+# Lancer le serveur Label Studio en premier plan
+echo "=> Starting Label Studio"
+exec label-studio start --host 0.0.0.0 --port "${LABEL_STUDIO_PORT}" --no-browser
