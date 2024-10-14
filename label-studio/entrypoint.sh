@@ -1,15 +1,6 @@
 #!/bin/bash
 set -e
 
-
-# Charger les variables d'environnement depuis le fichier .env
-if [ -f .env ]; then
-    echo "=> Loading environment variables from .env file"
-    dotenv -f .env
-else
-    echo "=> No .env file found, using default environment variables"
-fi
-
 # Afficher les variables d'environnement
 echo "=> Starting Label Studio with the following environment:"
 echo "   LABEL_STUDIO_USERNAME=${LABEL_STUDIO_USERNAME}"
@@ -20,6 +11,7 @@ echo "   LABEL_STUDIO_BUCKET_ENDPOINT_URL=${LABEL_STUDIO_BUCKET_ENDPOINT_URL}"
 echo "   LABEL_STUDIO_BUCKET_ACCESS_KEY=${LABEL_STUDIO_BUCKET_ACCESS_KEY}"
 echo "   LABEL_STUDIO_BUCKET_SECRET_KEY=${LABEL_STUDIO_BUCKET_SECRET_KEY}"
 echo "   AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}"
+
 
 
 # Configurer la base de données et le répertoire des médias

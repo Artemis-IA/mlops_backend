@@ -3,8 +3,12 @@
 FROM nginx:latest
 
 # Installer envsubst (via gettext-base)
-RUN apt-get update && apt-get install -y gettext-base netcat-openbsd && rm -rf /var/lib/apt/lists/*
-
+RUN apt-get update \
+    && apt-get install -y jq gettext-base netcat-openbsd \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupmod -g 998 www-data \
+    && usermod -aG 998 www-data
+    
 # Copier la configuration Nginx template
 COPY nginx.conf /etc/nginx/nginx.conf.template
 
