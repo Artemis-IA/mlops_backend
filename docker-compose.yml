@@ -30,6 +30,7 @@ services:
     env_file:
       - .env
     environment:
+      - MINIO_SERVER_OPTS="--trace"
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       - MINIO_API_URL=${MINIO_API_URL}

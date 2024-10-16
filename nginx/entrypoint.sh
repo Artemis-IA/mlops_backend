@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+# Set proxy environment variables if available
+export NO_PROXY=${NO_PROXY}
+
 echo "Vérification de la disponibilité des services..."
 
 # Attendre que MinIO soit prêt
@@ -21,6 +24,10 @@ wait_for_service "mlflow" "${MLFLOW_PORT}"
 
 echo "Tous les services sont disponibles."
 
+
+
+# Démarrer Nginx
+exec nginx -g 'daemon off;'
 
 # # Vérifier si le token a déjà été récupéré
 # TOKEN_FILE="/tmp/haproxy_token.txt"
@@ -61,7 +68,3 @@ echo "Tous les services sont disponibles."
 # # Afficher le contenu de nginx.conf pour vérification
 # echo "Contenu de nginx.conf :"
 # cat /etc/nginx/nginx.conf
-
-
-# Démarrer Nginx
-exec nginx -g 'daemon off;'

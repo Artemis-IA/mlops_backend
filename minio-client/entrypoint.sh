@@ -10,21 +10,23 @@ export MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
 export HTTP_PROXY=${HTTP_PROXY}
 export HTTPS_PROXY=${HTTPS_PROXY}
 
+echo "Setting MinIO alias..."
+mc alias set myminio http://minio:${MINIO_PORT} ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD} || {
+  echo "Failed to set alias for MinIO"
+  exit 1
+}
 
-# Configure the alias and create buckets
-mc alias set myminio http://minio:${MINIO_PORT} ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD}
-
-# Create buckets if they don't exist
+echo "Creating buckets..."
 mc mb myminio/data || echo "Bucket 'data' already exists."
 mc mb myminio/mlflow || echo "Bucket 'mlflow' already exists."
 mc mb myminio/labelstudio || echo "Bucket 'labelstudio' already exists."
 
-# Set bucket policies to public
-mc policy set public myminio/data
-mc policy set public myminio/mlflow
-mc policy set public myminio/labelstudio
+echo "Setting public policies for buckets..."
+mc policy set public myminio/data || echo "Failed to set public policy for 'data'"
+mc policy set public myminio/mlflow || echo "Failed to set public policy for 'mlflow'"
+mc policy set public myminio/labelstudio || echo "Failed to set public policy for 'labelstudio'"
 
-# Apply CORS policy to MinIO
+
 echo "=> Applying CORS policy to MinIO"
 if [ -f /label-studio/cors.json ]; then
   mc admin policy create myminio cors /label-studio/cors.json || echo "CORS policy already applied."
