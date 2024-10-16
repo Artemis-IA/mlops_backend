@@ -1,6 +1,7 @@
+version: '3.8'
 
 services:
-  
+
   postgres:
     container_name: postgres
     build:
@@ -14,12 +15,11 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - HTTP_PROXY=${HTTP_PROXY}
       - HTTPS_PROXY=${HTTPS_PROXY}
-      - NO_PROXY=${NO_PROXY}
+      - NO_PROXY=${NO_PROXY},minio,minio-client,postgres,label-studio,mlflow,nginx,localhost,127.0.0.1
     ports:
       - "${POSTGRES_PORT}:${POSTGRES_PORT}"
     volumes:
       - postgres-data:/var/lib/postgresql/data
-      - ./postgres/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
     networks:
       - shared-network
     restart: always
@@ -30,24 +30,20 @@ services:
     env_file:
       - .env
     environment:
-      - MINIO_SERVER_OPTS="--trace"
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
-      - MINIO_API_URL=${MINIO_API_URL}
       - HTTP_PROXY=${HTTP_PROXY}
       - HTTPS_PROXY=${HTTPS_PROXY}
-      - NO_PROXY=${NO_PROXY}
+      - NO_PROXY=${NO_PROXY},minio,minio-client,postgres,label-studio,mlflow,nginx,localhost,127.0.0.1
     command: server /data
     ports:
       - "${MINIO_PORT}:${MINIO_PORT}"
       - "${MINIO_CONSOLE_PORT}:${MINIO_CONSOLE_PORT}"
-
     volumes:
       - minio-data:/data
     networks:
       - shared-network
     restart: always
-
 
   minio-client:
     container_name: minio-client
@@ -62,13 +58,12 @@ services:
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       - HTTP_PROXY=${HTTP_PROXY}
       - HTTPS_PROXY=${HTTPS_PROXY}
-      - NO_PROXY=${NO_PROXY}
+      - NO_PROXY=${NO_PROXY},minio,minio-client,postgres,label-studio,mlflow,nginx,localhost,127.0.0.1
     volumes:
       - ./label-studio/cors.json:/label-studio/cors.json
     networks:
       - shared-network
     restart: always
-
 
   mlflow:
     container_name: mlflow
@@ -83,24 +78,15 @@ services:
       - MLFLOW_S3_ENDPOINT_URL=${MLFLOW_S3_ENDPOINT_URL}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
-      - MLFLOW_TRACKING_URI=${MLFLOW_TRACKING_URI}
       - HTTP_PROXY=${HTTP_PROXY}
       - HTTPS_PROXY=${HTTPS_PROXY}
-      - NO_PROXY=${NO_PROXY}
+      - NO_PROXY=${NO_PROXY},minio,minio-client,postgres,label-studio,mlflow,nginx,localhost,127.0.0.1
     ports:
       - "${MLFLOW_PORT}:${MLFLOW_PORT}"
     volumes:
       - ./mlflow:/mlflow
     networks:
       - shared-network
-    # depends_on:
-    #   postgres:
-    #     condition: service_started
-    #   minio:
-    #     condition: service_started
-    #   minio-client:
-    #     condition: service_started
     restart: always
 
   label-studio:
@@ -111,39 +97,25 @@ services:
     env_file:
       - .env
     environment:
-      - DJANGO_SUPERUSER_USERNAME=${LABEL_STUDIO_USERNAME}
-      - DJANGO_SUPERUSER_EMAIL=${LABEL_STUDIO_EMAIL}
-      - DJANGO_SUPERUSER_PASSWORD=${LABEL_STUDIO_PASSWORD}
-      - SECRET_KEY=${SECRET_KEY}
-      - LABEL_STUDIO_API_KEY=${LABEL_STUDIO_API_KEY}
-      - MLFLOW_TRACKING_URI=${MLFLOW_TRACKING_URI}
-      - LABEL_STUDIO_BUCKET_NAME=${LABEL_STUDIO_BUCKET_NAME}
       - LABEL_STUDIO_BUCKET_ENDPOINT_URL=${LABEL_STUDIO_BUCKET_ENDPOINT_URL}
       - LABEL_STUDIO_BUCKET_ACCESS_KEY=${LABEL_STUDIO_BUCKET_ACCESS_KEY}
       - LABEL_STUDIO_BUCKET_SECRET_KEY=${LABEL_STUDIO_BUCKET_SECRET_KEY}
       - HTTP_PROXY=${HTTP_PROXY}
       - HTTPS_PROXY=${HTTPS_PROXY}
-      - NO_PROXY=${NO_PROXY}
+      - NO_PROXY=${NO_PROXY},minio,minio-client,postgres,label-studio,mlflow,nginx,localhost,127.0.0.1
     ports:
       - "${LABEL_STUDIO_PORT}:${LABEL_STUDIO_PORT}"
     volumes:
       - label-studio-data:/label-studio/data
     networks:
       - shared-network
-    # depends_on:
-    #   postgres:
-    #     condition: service_started
-    #   minio:
-    #     condition: service_started
-    #   mlflow:
-    #     condition: service_started
     restart: always
 
   nginx:
+    container_name: nginx
     build:
       context: ./nginx
       dockerfile: Dockerfile
-    container_name: nginx
     ports:
       - "80:80"
       - "443:443"
@@ -154,14 +126,13 @@ services:
     environment:
       - LABEL_STUDIO_PORT=${LABEL_STUDIO_PORT}
       - MLFLOW_PORT=${MLFLOW_PORT}
-      - HTTP_PROXY=
-      - HTTPS_PROXY=
-      - NO_PROXY=${NO_PROXY}
       - MINIO_PORT=${MINIO_PORT}
+      - HTTP_PROXY=${HTTP_PROXY}
+      - HTTPS_PROXY=${HTTPS_PROXY}
+      - NO_PROXY=${NO_PROXY},minio,minio-client,postgres,label-studio,mlflow,nginx,localhost,127.0.0.1
     networks:
       - shared-network
     restart: always
-  
 
 volumes:
   postgres-data:
