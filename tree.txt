@@ -1,17 +1,16 @@
 .
 ├── docker-compose.yml
 ├── label-studio
+│   ├── cors.json
+│   ├── data
 │   ├── Dockerfile
 │   └── entrypoint.sh
 ├── minio-client
 │   ├── bucket_upload.py
-│   ├── cors.json
 │   ├── Dockerfile
 │   └── entrypoint.sh
 ├── mlflow
 │   ├── Dockerfile
-│   ├── Dockerfile_mlflow
-│   ├── entrypoint_mlflow.sh
 │   ├── entrypoint.sh
 │   └── wait-for-it.sh
 ├── nginx

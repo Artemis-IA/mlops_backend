@@ -1,25 +1,24 @@
-version: '3.8'
 
 services:
 
-  postgres:
-    container_name: postgres
+  postgre:
+    container_name: postgre
     build:
-      context: ./postgres
+      context: ./postgre
       dockerfile: Dockerfile
     env_file:
       - .env
     environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRE_USER=${POSTGRE_USER}
+      - POSTGRE_PASSWORD=${POSTGRE_PASSWORD}
+      - POSTGRE_DB=${POSTGRE_DB}
       - HTTP_PROXY=${HTTP_PROXY}
       - HTTPS_PROXY=${HTTPS_PROXY}
-      - NO_PROXY=${NO_PROXY},minio,minio-client,postgres,label-studio,mlflow,nginx,localhost,127.0.0.1
+      - NO_PROXY=${NO_PROXY},minio,minio-client,postgre,label-studio,mlflow,nginx,localhost,127.0.0.1
     ports:
-      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+      - "${POSTGRE_PORT}:${POSTGRE_PORT}"
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - postgre-data:/var/lib/postgresql/data
     networks:
       - shared-network
     restart: always
@@ -34,7 +33,7 @@ services:
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       - HTTP_PROXY=${HTTP_PROXY}
       - HTTPS_PROXY=${HTTPS_PROXY}
-      - NO_PROXY=${NO_PROXY},minio,minio-client,postgres,label-studio,mlflow,nginx,localhost,127.0.0.1
+      - NO_PROXY=${NO_PROXY},minio,minio-client,postgre,label-studio,mlflow,nginx,localhost,127.0.0.1
     command: server /data
     ports:
       - "${MINIO_PORT}:${MINIO_PORT}"
@@ -58,7 +57,7 @@ services:
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       - HTTP_PROXY=${HTTP_PROXY}
       - HTTPS_PROXY=${HTTPS_PROXY}
-      - NO_PROXY=${NO_PROXY},minio,minio-client,postgres,label-studio,mlflow,nginx,localhost,127.0.0.1
+      - NO_PROXY=${NO_PROXY},minio,minio-client,postgre,label-studio,mlflow,nginx,localhost,127.0.0.1
     volumes:
       - ./label-studio/cors.json:/label-studio/cors.json
     networks:
@@ -80,7 +79,7 @@ services:
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - HTTP_PROXY=${HTTP_PROXY}
       - HTTPS_PROXY=${HTTPS_PROXY}
-      - NO_PROXY=${NO_PROXY},minio,minio-client,postgres,label-studio,mlflow,nginx,localhost,127.0.0.1
+      - NO_PROXY=${NO_PROXY},minio,minio-client,postgre,label-studio,mlflow,nginx,localhost,127.0.0.1
     ports:
       - "${MLFLOW_PORT}:${MLFLOW_PORT}"
     volumes:
@@ -102,7 +101,7 @@ services:
       - LABEL_STUDIO_BUCKET_SECRET_KEY=${LABEL_STUDIO_BUCKET_SECRET_KEY}
       - HTTP_PROXY=${HTTP_PROXY}
       - HTTPS_PROXY=${HTTPS_PROXY}
-      - NO_PROXY=${NO_PROXY},minio,minio-client,postgres,label-studio,mlflow,nginx,localhost,127.0.0.1
+      - NO_PROXY=${NO_PROXY},minio,minio-client,postgre,label-studio,mlflow,nginx,localhost,127.0.0.1
     ports:
       - "${LABEL_STUDIO_PORT}:${LABEL_STUDIO_PORT}"
     volumes:
@@ -111,31 +110,31 @@ services:
       - shared-network
     restart: always
 
-  nginx:
-    container_name: nginx
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    env_file:
-      - .env
-    environment:
-      - LABEL_STUDIO_PORT=${LABEL_STUDIO_PORT}
-      - MLFLOW_PORT=${MLFLOW_PORT}
-      - MINIO_PORT=${MINIO_PORT}
-      - HTTP_PROXY=${HTTP_PROXY}
-      - HTTPS_PROXY=${HTTPS_PROXY}
-      - NO_PROXY=${NO_PROXY},minio,minio-client,postgres,label-studio,mlflow,nginx,localhost,127.0.0.1
-    networks:
-      - shared-network
-    restart: always
+  # nginx:
+  #   container_name: nginx
+  #   build:
+  #     context: ./nginx
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     - LABEL_STUDIO_PORT=${LABEL_STUDIO_PORT}
+  #     - MLFLOW_PORT=${MLFLOW_PORT}
+  #     - MINIO_PORT=${MINIO_PORT}
+  #     - HTTP_PROXY=${HTTP_PROXY}
+  #     - HTTPS_PROXY=${HTTPS_PROXY}
+  #     - NO_PROXY=${NO_PROXY},minio,minio-client,postgre,label-studio,mlflow,nginx,localhost,127.0.0.1
+  #   networks:
+  #     - shared-network
+  #   restart: always
 
 volumes:
-  postgres-data:
+  postgre-data:
   minio-data:
   label-studio-data:
   mlflow-data:

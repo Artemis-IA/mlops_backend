@@ -22,9 +22,9 @@ mc mb myminio/mlflow || echo "Bucket 'mlflow' already exists."
 mc mb myminio/labelstudio || echo "Bucket 'labelstudio' already exists."
 
 echo "Setting public policies for buckets..."
-mc policy set public myminio/data || echo "Failed to set public policy for 'data'"
-mc policy set public myminio/mlflow || echo "Failed to set public policy for 'mlflow'"
-mc policy set public myminio/labelstudio || echo "Failed to set public policy for 'labelstudio'"
+mc anonymous set public myminio/data || echo "Failed to set public policy for 'data'"
+mc anonymous set public myminio/mlflow || echo "Failed to set public policy for 'mlflow'"
+mc anonymous set public myminio/labelstudio || echo "Failed to set public policy for 'labelstudio'"
 
 
 echo "=> Applying CORS policy to MinIO"
