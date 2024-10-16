@@ -12,6 +12,8 @@ RUN chmod +x /entrypoint_label_studio.sh
 
 USER 1001
 
+EXPOSE 8081
+
 ENTRYPOINT ["/entrypoint_label_studio.sh"]
 
 EXPOSE ${LABEL_STUDIO_PORT}

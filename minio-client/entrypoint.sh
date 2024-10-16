@@ -10,6 +10,7 @@ export MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
 export HTTP_PROXY=${HTTP_PROXY}
 export HTTPS_PROXY=${HTTPS_PROXY}
 
+
 # Configure the alias and create buckets
 mc alias set myminio http://minio:${MINIO_PORT} ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD}
 
@@ -25,10 +26,10 @@ mc policy set public myminio/labelstudio
 
 # Apply CORS policy to MinIO
 echo "=> Applying CORS policy to MinIO"
-if [ -f /label-studio/data/cors.json ]; then
-  mc admin policy create myminio cors /label-studio/data/cors.json || echo "CORS policy already applied."
+if [ -f /label-studio/cors.json ]; then
+  mc admin policy create myminio cors /label-studio/cors.json || echo "CORS policy already applied."
 else
-  echo "CORS policy file not found at /label-studio/data/cors.json"
+  echo "CORS policy file not found at /label-studio/cors.json"
 fi
 
 # Keep container alive

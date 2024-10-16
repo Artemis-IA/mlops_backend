@@ -62,12 +62,12 @@ services:
       - HTTP_PROXY=${HTTP_PROXY}
       - HTTPS_PROXY=${HTTPS_PROXY}
       - NO_PROXY=${NO_PROXY}
-    depends_on:
-      minio:
-        condition: service_started
+    volumes:
+      - ./label-studio/cors.json:/label-studio/cors.json
     networks:
       - shared-network
     restart: always
+
 
   mlflow:
     container_name: mlflow
@@ -93,13 +93,13 @@ services:
       - ./mlflow:/mlflow
     networks:
       - shared-network
-    depends_on:
-      postgres:
-        condition: service_started
-      minio:
-        condition: service_started
-      minio-client:
-        condition: service_started
+    # depends_on:
+    #   postgres:
+    #     condition: service_started
+    #   minio:
+    #     condition: service_started
+    #   minio-client:
+    #     condition: service_started
     restart: always
 
   label-studio:
@@ -129,13 +129,13 @@ services:
       - label-studio-data:/label-studio/data
     networks:
       - shared-network
-    depends_on:
-      postgres:
-        condition: service_started
-      minio:
-        condition: service_started
-      mlflow:
-        condition: service_started
+    # depends_on:
+    #   postgres:
+    #     condition: service_started
+    #   minio:
+    #     condition: service_started
+    #   mlflow:
+    #     condition: service_started
     restart: always
 
   nginx:
@@ -153,17 +153,14 @@ services:
     environment:
       - LABEL_STUDIO_PORT=${LABEL_STUDIO_PORT}
       - MLFLOW_PORT=${MLFLOW_PORT}
-      - HTTP_PROXY=${HTTP_PROXY}
-      - HTTPS_PROXY=${HTTPS_PROXY}
+      - HTTP_PROXY=
+      - HTTPS_PROXY=
       - NO_PROXY=${NO_PROXY}
-    depends_on:
-      label-studio:
-        condition: service_started
-      mlflow:
-        condition: service_started
+      - MINIO_PORT=${MINIO_PORT}
     networks:
       - shared-network
     restart: always
+  
 
 volumes:
   postgres-data:
