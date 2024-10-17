@@ -23,10 +23,10 @@ if [ -f /docker-entrypoint-initdb.d/init_db.sql.template ]; then
   envsubst < /docker-entrypoint-initdb.d/init_db.sql.template > /docker-entrypoint-initdb.d/init_db.sql
 fi
 
-# # Initialize the database using the processed SQL file
-# if [ -f /docker-entrypoint-initdb.d/init_db.sql ]; then
-#   psql -U "${POSTGRES_USER}" -d "${POSTGRES_DB}" -f /docker-entrypoint-initdb.d/init_db.sql
-# fi
+# Initialize the database using the processed SQL file
+if [ -f /docker-entrypoint-initdb.d/init_db.sql ]; then
+  psql -U "${POSTGRES_USER}" -d "${POSTGRES_DB}" -f /docker-entrypoint-initdb.d/init_db.sql
+fi
 
 # Wait for the PostgreSQL process to finish
 wait
