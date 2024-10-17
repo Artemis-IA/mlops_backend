@@ -3,7 +3,7 @@ FROM heartexlabs/label-studio:latest
 
 USER root
 
-RUN apt-get update && apt-get install -y jq
+RUN apt-get update && apt-get install -y jq postgresql-client && apt-get clean
 
 COPY entrypoint.sh /entrypoint_label_studio.sh
 COPY ../.env /label-studio/data/.env

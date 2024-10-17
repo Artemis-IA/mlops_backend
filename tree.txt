@@ -18,11 +18,11 @@
 │   ├── entrypoint.sh
 │   └── nginx.conf
 ├── postgre
-│   ├── Dockerfile
-│   ├── entrypoint.sh
-│   ├── init_db.sql.template
-│   └── install_pgvector.sh
+│   ├── Dockerfile
+│   ├── entrypoint.sh
+│   ├── init_db.sql.template
+│   └── install_pgvector.sh
 ├── README.md
 └── tree.txt
 
-42 directories, 272 files
+41 directories, 273 files
