@@ -17,10 +17,11 @@
 │   ├── Dockerfile
 │   ├── entrypoint.sh
 │   └── nginx.conf
-├── postgres
-│   ├── Dockerfile
-│   ├── entrypoint.sh
-│   └── init_db.sql
+├── postgre
+│   ├── Dockerfile
+│   ├── entrypoint.sh
+│   ├── init_db.sql.template
+│   └── install_pgvector.sh
 ├── README.md
 └── tree.txt
 

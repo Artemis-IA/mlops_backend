@@ -6,12 +6,14 @@ services:
     build:
       context: ./postgre
       dockerfile: Dockerfile
+      args:
+        PG_MAJOR: ${PG_MAJOR}
     env_file:
       - .env
     environment:
-      - POSTGRE_USER=${POSTGRE_USER}
-      - POSTGRE_PASSWORD=${POSTGRE_PASSWORD}
-      - POSTGRE_DB=${POSTGRE_DB}
+      - POSTGRES_USER=${POSTGRE_USER}
+      - POSTGRES_PASSWORD=${POSTGRE_PASSWORD}
+      - POSTGRES_DB=${POSTGRE_DB}
       - HTTP_PROXY=${HTTP_PROXY}
       - HTTPS_PROXY=${HTTPS_PROXY}
       - NO_PROXY=${NO_PROXY},minio,minio-client,postgre,label-studio,mlflow,nginx,localhost,127.0.0.1

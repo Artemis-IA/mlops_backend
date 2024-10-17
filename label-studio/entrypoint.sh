@@ -20,7 +20,7 @@ echo "PostgreSQL is available."
 
 # Initialiser et démarrer le projet Label Studio avec PostgreSQL
 echo "=> Initializing Label Studio with PostgreSQL"
-label-studio start ${LABEL_STUDIO_PEOJECT_NAME} --init -b --username ${LABEL_STUDIO_USERNAME} --password ${LABEL_STUDIO_PASSWORD} -db ${POSTGRE_DB} || true
+label-studio start ${LABEL_STUDIO_PROJECT_NAME} --init -b --username ${LABEL_STUDIO_USERNAME} --password ${LABEL_STUDIO_PASSWORD} -db postgresql || true
 
 # Attendre que MinIO soit disponible
 echo "=> Waiting for MinIO to be available..."
