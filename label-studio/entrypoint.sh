@@ -31,7 +31,7 @@ export DATABASE_URL="postgresql://${POSTGRE_USER}:${POSTGRE_PASSWORD}@${POSTGRE_
 #   echo "=> Label Studio project '${LABEL_STUDIO_PROJECT_NAME}' already exists."
 # fi
 
-label-studio init ${LABEL_STUDIO_PROJECT_NAME} -db postgresql --username ${LABEL_STUDIO_EMAIL} --password ${LABEL_STUDIO_PASSWORD} 
+# label-studio init -b ${LABEL_STUDIO_PROJECT_NAME} -db postgresql --username ${LABEL_STUDIO_EMAIL} --password ${LABEL_STUDIO_PASSWORD} 
 
 # Wait for MinIO to be available
 echo "=> Waiting for MinIO to be available..."
@@ -59,10 +59,9 @@ cat <<EOF > /label-studio/config/storage.json
 }
 EOF
 
-# Start Label Studio
 echo "=> Starting Label Studio"
-exec label-studio start -db postgresql --host 0.0.0.0 --port "${LABEL_STUDIO_PORT}" --no-browser "${LABEL_STUDIO_PROJECT_NAME}" \
-  --no-browser --username "${LABEL_STUDIO_EMAIL}" --password "${LABEL_STUDIO_PASSWORD}" \
-  --database "${DATABASE_URL}"
+ label-studio start -b -db postgresql --init "${LABEL_STUDIO_PROJECT_NAME}" --host 127.0.0.1 --port "${LABEL_STUDIO_PORT}" \
+   --username "${LABEL_STUDIO_EMAIL}" --password "${LABEL_STUDIO_PASSWORD}" \
+  --database "${DATABASE_URL}" 
 
 # gunicorn -w 4 -b 0.0.0.0:8081 core.wsgi:application

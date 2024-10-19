@@ -24,8 +24,6 @@ wait_for_service "mlflow" "${MLFLOW_PORT}"
 
 echo "Tous les services sont disponibles."
 
-
-
 # Démarrer Nginx
 exec nginx -g 'daemon off;'
 
