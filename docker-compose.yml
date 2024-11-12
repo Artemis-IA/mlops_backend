@@ -1,51 +1,6 @@
 
 services:
 
-  nginx:
-    container_name: nginx
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./label-studio/cors.json:/label-studio/cors.json
-
-    env_file:
-      - .env
-    environment:
-      - LABEL_STUDIO_PORT=${LABEL_STUDIO_PORT}
-      - MLFLOW_PORT=${MLFLOW_PORT}
-      - MINIO_PORT=${MINIO_PORT}
-      - HTTP_PROXY=${HTTP_PROXY}
-      - HTTPS_PROXY=${HTTPS_PROXY}
-      - NO_PROXY=${NO_PROXY},minio,minio-client,postgre,label-studio,mlflow,nginx,localhost,127.0.0.1
-    networks:
-      - shared-network
-    depends_on:
-      - label-studio
-      - minio
-    restart: unless-stopped
-
-  # nginx:
-  #   container_name: nginx
-  #   image: nginx:latest
-  #   ports:
-  #     - "80:80"
-  #     - "443:443"
-  #   volumes:
-  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-  #     - ./nginx/certs:/etc/nginx/certs:ro
-  #   depends_on:
-  #     - label-studio
-  #     - minio
-  #   networks:
-  #     - shared-network
-  #   restart: unless-stopped
-
   postgre:
     container_name: postgre
     build:
@@ -87,6 +42,12 @@ services:
       - "${MINIO_CONSOLE_PORT}:${MINIO_CONSOLE_PORT}"
     volumes:
       - minio-data:/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.minio.rule=Host(`minio.mlops.bzh`)"
+      - "traefik.http.routers.minio.entrypoints=websecure"
+      - "traefik.http.routers.minio.tls.certresolver=cloudflare"
+      - "traefik.http.routers.minio.middlewares=authelia@docker,secureHeaders@docker"
     networks:
       - shared-network
     restart: always
@@ -105,6 +66,8 @@ services:
       - HTTP_PROXY=${HTTP_PROXY}
       - HTTPS_PROXY=${HTTPS_PROXY}
       - NO_PROXY=${NO_PROXY},minio,minio-client,postgre,label-studio,mlflow,nginx,localhost,127.0.0.1
+    ports:
+      - "${MINIO_CLIENT_PORT}:${MINIO_CLIENT_PORT}"
     volumes:
       - ./label-studio/cors.json:/label-studio/cors.json
     networks:
@@ -112,6 +75,28 @@ services:
     depends_on:
       - minio
     restart: always
+
+  neo4j:
+    image: neo4j:latest
+    container_name: neo4j
+    ports:
+      - "7474:7474"  # Port for Neo4j web interface
+      - "7687:7687"  # Port for Neo4j Bolt protocol
+    environment:
+      - NEO4J_AUTH=neo4j/your_password
+      - NEO4J_PLUGINS=["apoc"]
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.neo4j.rule=Host(`neo4j.mlops.bzh`)"
+      - "traefik.http.routers.neo4j.entrypoints=websecure"
+      - "traefik.http.routers.neo4j.tls.certresolver=cloudflare"
+      - "traefik.http.routers.neo4j.middlewares=authelia@docker,secureHeaders@docker"
+    networks:
+      - shared-network
+    restart: unless-stopped 
 
   mlflow:
     container_name: mlflow
@@ -133,6 +118,12 @@ services:
       - "${MLFLOW_PORT}:${MLFLOW_PORT}"
     volumes:
       - ./mlflow:/mlflow
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mlflow.rule=Host(`mlflow.mlops.bzh`)"
+      - "traefik.http.routers.mlflow.entrypoints=websecure"
+      - "traefik.http.routers.mlflow.tls.certresolver=cloudflare"
+      - "traefik.http.routers.mlflow.middlewares=authelia@docker,secureHeaders@docker"
     networks:
       - shared-network
     restart: always
@@ -150,6 +141,8 @@ services:
       - LABEL_STUDIO_BUCKET_ACCESS_KEY=${LABEL_STUDIO_BUCKET_ACCESS_KEY}
       - LABEL_STUDIO_BUCKET_SECRET_KEY=${LABEL_STUDIO_BUCKET_SECRET_KEY}
       - LABEL_STUDIO_ROOT_URL=/labelstudio/
+      - DJANGO_CSRF_TRUSTED_ORIGINS=https://labelstudio.mlops.bzh
+      - CSRF_COOKIE_SECURE=1
       - HTTP_PROXY=${HTTP_PROXY}
       - HTTPS_PROXY=${HTTPS_PROXY}
       - NO_PROXY=${NO_PROXY},minio,minio-client,postgre,label-studio,mlflow,nginx,localhost,127.0.0.1
@@ -163,16 +156,62 @@ services:
     volumes:
       - label-studio-data:/label-studio/data
       - ./label-studio/cors.json:/label-studio/cors.json
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.labelstudio.rule=Host(`labelstudio.mlops.bzh`)"
+      - "traefik.http.routers.labelstudio.entrypoints=websecure"
+      - "traefik.http.routers.labelstudio.tls.certresolver=cloudflare"
+      - "traefik.http.routers.labelstudio.middlewares=authelia@docker,secureHeaders@docker"
     networks:
       - shared-network
     restart: always
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./metrics/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - shared-network
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.prometheus.rule=Host(`prometheus.mlops.bzh`)"
+      - "traefik.http.routers.prometheus.entrypoints=websecure"
+      - "traefik.http.routers.prometheus.tls.certresolver=cloudflare"
+      - "traefik.http.routers.prometheus.middlewares=authelia@docker,secureHeaders@docker"
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin_password  # Changez ceci pour des raisons de sécurité
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+    networks:
+      - shared-network
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana.rule=Host(`grafana.mlops.bzh`)"
+      - "traefik.http.routers.grafana.entrypoints=websecure"
+      - "traefik.http.routers.grafana.tls.certresolver=cloudflare"
+      - "traefik.http.routers.grafana.middlewares=authelia@docker,secureHeaders@docker"
 
 volumes:
   postgre-data:
   minio-data:
   label-studio-data:
   mlflow-data:
+  neo4j_data:
+  neo4j_logs:
+  grafana-data:
 
 networks:
   shared-network:
-    driver: bridge
+    external: true

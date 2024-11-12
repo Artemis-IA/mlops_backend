@@ -59,6 +59,9 @@ CREATE TABLE IF NOT EXISTS tasks (
     status VARCHAR(20) NOT NULL
 );
 
+-- Donne les droits à labelstudio_user sur les tables
+GRANT ALL PRIVILEGES ON TABLE annotations, tasks TO ${LABEL_STUDIO_USER};
+
 -- Tables communes pour les embeddings
 \c ${POSTGRES_DB}
 CREATE TABLE IF NOT EXISTS user_embeddings (
