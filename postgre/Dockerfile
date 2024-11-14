@@ -1,4 +1,4 @@
-ARG PG_MAJOR=${PG_MAJOR}
+ARG PG_MAJOR=16
 FROM postgres:${PG_MAJOR}
 
 # Install dependencies
