@@ -33,6 +33,9 @@ services:
     environment:
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+      - MINIO_PORT=${MINIO_PORT}
+      - MINIO_CONSOLE_PORT=${MINIO_CONSOLE_PORT}
+      - MINIO_SERVER_URL=http://minio:${MINIO_PORT}         # URL fixe pour l'API
       - HTTP_PROXY=${HTTP_PROXY}
       - HTTPS_PROXY=${HTTPS_PROXY}
       - NO_PROXY=${NO_PROXY},minio,minio-client,postgre,label-studio,mlflow,nginx,localhost,127.0.0.1
@@ -94,6 +97,8 @@ services:
       - "traefik.http.routers.neo4j.entrypoints=websecure"
       - "traefik.http.routers.neo4j.tls.certresolver=cloudflare"
       - "traefik.http.routers.neo4j.middlewares=authelia@docker,secureHeaders@docker"
+      - "traefik.http.services.minio.loadbalancer.server.port=${MINIO_CONSOLE_PORT}"
+
     networks:
       - shared-network
     restart: unless-stopped 
