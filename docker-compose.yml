@@ -171,6 +171,35 @@ services:
       - shared-network
     restart: always
 
+
+  gliner:
+    container_name: gliner
+    image: humansignal/ml-backend:v0
+    build:
+      context: ./label-studio-ml-backend/gliner
+      args:
+        TEST_ENV: ${TEST_ENV}
+    env_file:
+      - .env
+    environment:
+      - BASIC_AUTH_USER=${GLINER_BASIC_AUTH_USER}
+      - BASIC_AUTH_PASS=${GLINER_BASIC_AUTH_PASS}
+      # set the log level for the model server
+      - LOG_LEVEL=DEBUG
+      - ANY=PARAMETER
+      - WORKERS=1
+      - THREADS=8
+      - MODEL_DIR=/data/models
+      - LABEL_STUDIO_URL=http://${LOCIP}:${LABEL_STUDIO_PORT}
+      - LABEL_STUDIO_API_KEY=${LABEL_STUDIO_API_KEY}
+
+    ports:
+      - "${MLBACKEND_PORT}:${MLBACKEND_PORT}"
+    volumes:
+      - "./data/server:/data"
+    networks:
+      - shared-network
+
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
@@ -212,6 +241,7 @@ volumes:
   postgre-data:
   minio-data:
   label-studio-data:
+  gliner-data:
   mlflow-data:
   neo4j_data:
   neo4j_logs:

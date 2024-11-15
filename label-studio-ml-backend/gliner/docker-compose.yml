@@ -28,8 +28,8 @@ services:
       # uploaded, local storage and cloud storage files.
       # Do not use 'localhost' as it does not work within Docker containers.
       # Use prefix 'http://' or 'https://' for the URL always.
-      # Determine the actual IP using 'ifconfig' (Linux/Mac) or 'ipconfig' (Windows).
-      - LABEL_STUDIO_URL=http://localhost:${LABEL_STUDIO_PORT}
+      # Determine the actual IP using 'ifconfig' (Linux/Mac) or 'ipconfig'LABEL_STUDIO_URL=http://host.docker.internal:${LABEL_STUDIO_PORT}
+      - LABEL_STUDIO_URL=http://host.docker.internal:${LABEL_STUDIO_PORT}
       - LABEL_STUDIO_API_KEY=${LABEL_STUDIO_API_KEY}
 
     ports:
