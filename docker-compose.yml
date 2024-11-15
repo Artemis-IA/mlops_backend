@@ -193,12 +193,15 @@ services:
       - MODEL_DIR=/mlflow/artifacts/models
       - LABEL_STUDIO_URL=http://host.docker.internal:${LABEL_STUDIO_PORT}
       - LABEL_STUDIO_API_KEY=${LABEL_STUDIO_API_KEY}
+      - HF_HOME=/app/huggingface_cache
     ports:
       - "${MLBACKEND_PORT}:${MLBACKEND_PORT}"
     depends_on:
       - label-studio
     volumes:
       - "./data/server:/data"
+      - ~/.cache/huggingface:/app/huggingface_cache
+
     networks:
       - shared-network
 

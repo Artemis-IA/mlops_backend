@@ -13,9 +13,10 @@ from tqdm import tqdm
 from transformers import get_cosine_schedule_with_warmup
 
 logger = logging.getLogger(__name__)
+os.environ["HF_HOME"] = "/app/huggingface_cache"
 
 GLINER_MODEL_NAME = os.getenv("GLINER_MODEL_NAME", "urchade/gliner_medium-v2.1")
-logger.info(f"Loading GLINER model {GLINER_MODEL_NAME}")
+logger.info(f"Loading GLINER model {GLINER_MODEL_NAME} from cache directory {os.environ['HF_HOME']}")
 MODEL = GLiNER.from_pretrained(GLINER_MODEL_NAME)
 
 
