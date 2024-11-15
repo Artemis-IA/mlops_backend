@@ -184,17 +184,19 @@ services:
     environment:
       - BASIC_AUTH_USER=${GLINER_BASIC_AUTH_USER}
       - BASIC_AUTH_PASS=${GLINER_BASIC_AUTH_PASS}
+      - LABEL_STUDIO_ML_BACKENDS=${LABEL_STUDIO_ML_BACKENDS}
       # set the log level for the model server
       - LOG_LEVEL=DEBUG
       - ANY=PARAMETER
       - WORKERS=1
       - THREADS=8
-      - MODEL_DIR=/data/models
-      - LABEL_STUDIO_URL=http://${LOCIP}:${LABEL_STUDIO_PORT}
+      - MODEL_DIR=/mlflow/artifacts/models
+      - LABEL_STUDIO_URL=http://host.docker.internal:${LABEL_STUDIO_PORT}
       - LABEL_STUDIO_API_KEY=${LABEL_STUDIO_API_KEY}
-
     ports:
       - "${MLBACKEND_PORT}:${MLBACKEND_PORT}"
+    depends_on:
+      - label-studio
     volumes:
       - "./data/server:/data"
     networks:
