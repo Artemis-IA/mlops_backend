@@ -39,7 +39,7 @@ services:
       - HTTP_PROXY=${HTTP_PROXY}
       - HTTPS_PROXY=${HTTPS_PROXY}
       - NO_PROXY=${NO_PROXY},minio,minio-client,postgre,label-studio,mlflow,nginx,localhost,127.0.0.1
-    command: server /data
+    command: server --address :${MINIO_PORT} --console-address :${MINIO_CONSOLE_PORT} /data
     ports:
       - "${MINIO_PORT}:${MINIO_PORT}"
       - "${MINIO_CONSOLE_PORT}:${MINIO_CONSOLE_PORT}"
@@ -86,7 +86,8 @@ services:
       - "7474:7474"  # Port for Neo4j web interface
       - "7687:7687"  # Port for Neo4j Bolt protocol
     environment:
-      - NEO4J_AUTH=neo4j/your_password
+      - NEO4J_AUTH=neo4j/docker exec -it neo4j cypher-shell -u neo4j -p <your_password> "MATCH (n) RETURN COUNT(n) AS total_nodes;"
+
       - NEO4J_PLUGINS=["apoc"]
     volumes:
       - neo4j_data:/data
@@ -160,6 +161,7 @@ services:
       - "${LABEL_STUDIO_PORT}:${LABEL_STUDIO_PORT}"
     volumes:
       - label-studio-data:/label-studio/data
+      - ./label-studio/create_bucket.py:/label-studio/create_bucket.py
       - ./label-studio/cors.json:/label-studio/cors.json
     labels:
       - "traefik.enable=true"

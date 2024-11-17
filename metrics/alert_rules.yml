@@ -1,0 +1,42 @@
+groups:
+  - name: application_alerts
+    rules:
+      # Exemple : Alerte si le CPU dépasse 90 % pendant 1 minute
+      - alert: HighCPUUsage
+        expr: cpu_usage_percent > 90
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Haute utilisation CPU détectée"
+          description: "Le CPU a dépassé 90% pendant plus d'une minute."
+
+      # Exemple : Alerte si les émissions de CO₂ dépassent un seuil
+      - alert: HighCarbonEmissions
+        expr: carbon_emissions_grams > 10
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Émissions élevées de CO₂ détectées"
+          description: "Les émissions ont dépassé 10 gCO₂eq pendant plus d'une minute."
+
+      # Exemple : Alerte si la mémoire GPU est proche de la saturation
+      - alert: HighGPUMemoryUsage
+        expr: gpu_memory_usage_bytes > 8.5e+9  # Supposons 8.5 Go comme seuil
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Mémoire GPU élevée"
+          description: "La mémoire GPU est utilisée à plus de 90% de sa capacité."
+
+      # Exemple : Alerte si une application ne répond pas
+      - alert: ApplicationDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Application non disponible"
+          description: "L'une des applications surveillées ne répond pas."

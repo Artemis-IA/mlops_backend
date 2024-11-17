@@ -1,67 +1,42 @@
 #!/bin/bash
 set -e
 
-# Function to wait for service availability
-wait_for_service() {
-    local service=$1
-    local check_command=$2
-    echo "=> Waiting for $service..."
-    until eval $check_command; do
-        sleep 5
-        echo "$service is not ready yet..."
-    done
-    echo "$service is available."
-}
-
-# Verify S3 credentials before starting
-verify_s3_credentials() {
-    echo "=> Verifying S3 credentials..."
-    if ! aws --endpoint-url="${LABEL_STUDIO_BUCKET_ENDPOINT_URL}" \
-            s3 ls "s3://${LABEL_STUDIO_BUCKET_NAME}" \
-            --access-key "${LABEL_STUDIO_BUCKET_ACCESS_KEY}" \
-            --secret-key "${LABEL_STUDIO_BUCKET_SECRET_KEY}" \
-            --region us-east-1 >/dev/null 2>&1; then
-        echo "ERROR: Cannot connect to S3. Please verify your credentials and bucket configuration."
-        return 1
-    fi
-    echo "S3 credentials verified successfully."
-}
-
-# Verify required environment variables
-required_vars=(
-    "LABEL_STUDIO_EMAIL"
-    "LABEL_STUDIO_PASSWORD"
-    "POSTGRE_HOST"
-    "POSTGRE_PORT"
-    "POSTGRE_DB"
-    "LABEL_STUDIO_BUCKET_NAME"
-    "LABEL_STUDIO_BUCKET_ENDPOINT_URL"
-    "LABEL_STUDIO_BUCKET_ACCESS_KEY"
-    "LABEL_STUDIO_BUCKET_SECRET_KEY"
-    "MLBACKEND_PORT"
-)
-
-for var in "${required_vars[@]}"; do
-    if [[ -z "${!var}" ]]; then
-        echo "ERROR: Required environment variable $var is not set"
-        exit 1
-    fi
+# Vérification des variables d'environnement essentielles
+REQUIRED_ENV_VARS=("LABEL_STUDIO_API_KEY" "LABEL_STUDIO_EMAIL" "LABEL_STUDIO_PASSWORD" "POSTGRE_HOST" "POSTGRE_PORT" "POSTGRE_DB" "LABEL_STUDIO_BUCKET_ENDPOINT_URL" "LABEL_STUDIO_BUCKET_ACCESS_KEY" "LABEL_STUDIO_BUCKET_SECRET_KEY")
+for var in "${REQUIRED_ENV_VARS[@]}"; do
+  if [[ -z "${!var}" ]]; then
+    echo "ERREUR : La variable d'environnement $var est manquante. Arrêt du script."
+    exit 1
+  fi
 done
 
-# Set default host if not defined
-export LABEL_STUDIO_HOST=${LABEL_STUDIO_HOST:-"http://0.0.0.0"}
+# Définir LABEL_STUDIO_HOST par défaut si non défini
+if [[ -z "${LABEL_STUDIO_HOST}" ]]; then
+  export LABEL_STUDIO_HOST="http://0.0.0.0"
+fi
 
-# Wait for PostgreSQL
-wait_for_service "PostgreSQL" "pg_isready -h ${POSTGRE_HOST} -p ${POSTGRE_PORT} -U ${POSTGRE_USER}"
+# Attente de la disponibilité de PostgreSQL
+echo "=> En attente de la disponibilité de PostgreSQL..."
+until pg_isready -h "${POSTGRE_HOST}" -p "${POSTGRE_PORT}" -U "${POSTGRE_USER}"; do
+  sleep 5
+  echo "PostgreSQL n'est pas encore prêt..."
+done
+echo "PostgreSQL est disponible."
 
-# Configure database URL
+# Configuration de l'URL de la base de données
 export DATABASE_URL="postgresql://${POSTGRE_USER}:${POSTGRE_PASSWORD}@${POSTGRE_HOST}:${POSTGRE_PORT}/${POSTGRE_DB}"
+echo "DATABASE_URL=${DATABASE_URL}"
 
-# Wait for MinIO
-wait_for_service "MinIO" "curl -s ${LABEL_STUDIO_BUCKET_ENDPOINT_URL} > /dev/null"
+# Vérification de la disponibilité de MinIO
+echo "=> En attente de la disponibilité de MinIO..."
+until curl -s "${LABEL_STUDIO_BUCKET_ENDPOINT_URL}" > /dev/null; do
+  sleep 5
+  echo "MinIO n'est pas encore prêt..."
+done
+echo "MinIO est disponible."
 
-# Start Label Studio
-echo "=> Starting Label Studio..."
+# Démarrage de Label Studio
+echo "=> Démarrage de Label Studio..."
 label-studio start -b -db postgresql \
     --init "${LABEL_STUDIO_PROJECT_NAME}" \
     --host 0.0.0.0 \
@@ -72,79 +47,90 @@ label-studio start -b -db postgresql \
     --database "${DATABASE_URL}" \
     --log-level WARNING &
 
-# Wait for Label Studio API
-wait_for_service "Label Studio" "curl -s -f http://localhost:${LABEL_STUDIO_PORT}/health || false"
+# Attente que Label Studio soit prêt
+echo "=> Attente de la disponibilité de Label Studio..."
+until curl -s "http://localhost:${LABEL_STUDIO_PORT}/api/projects" \
+           -H "Authorization: Token ${LABEL_STUDIO_API_KEY}" > /dev/null; do
+  sleep 5
+  echo "En attente de Label Studio..."
+done
 
-# Function to make API calls with proper error handling
-api_call() {
-    local method=$1
-    local endpoint=$2
-    local data=$3
-    local response
-    
-    response=$(curl -s -X "${method}" \
-        "http://localhost:${LABEL_STUDIO_PORT}${endpoint}" \
-        -H "Authorization: Token ${LABEL_STUDIO_API_KEY}" \
-        -H "Content-Type: application/json" \
-        ${data:+-d "$data"})
-    
-    if [[ $? -ne 0 ]]; then
-        echo "API call failed: ${endpoint}"
-        return 1
-    fi
-    echo "${response}"
-}
+# Vérification si le projet existe
+echo "=> Vérification si le projet '${LABEL_STUDIO_PROJECT_NAME}' existe..."
+RESPONSE=$(curl -s "http://localhost:${LABEL_STUDIO_PORT}/api/projects" \
+  -H "Authorization: Token ${LABEL_STUDIO_API_KEY}")
+PROJECT_ID=$(echo "$RESPONSE" | jq -r ".results[] | select(.title==\"${LABEL_STUDIO_PROJECT_NAME}\") | .id")
 
-# Get or create project
-echo "=> Checking if project '${LABEL_STUDIO_PROJECT_NAME}' exists..."
-projects_response=$(api_call "GET" "/api/projects")
-project_id=$(echo "${projects_response}" | jq -r ".results[] | select(.title==\"${LABEL_STUDIO_PROJECT_NAME}\") | .id")
-
-if [[ -z "${project_id}" ]]; then
-    echo "=> Creating project '${LABEL_STUDIO_PROJECT_NAME}'..."
-    create_response=$(api_call "POST" "/api/projects" "{
-        \"title\": \"${LABEL_STUDIO_PROJECT_NAME}\",
-        \"description\": \"Automatically initialized project\",
-        \"label_config\": \"<View><Text name='text' value='\$text'/></View>\"
-    }")
-    project_id=$(echo "${create_response}" | jq -r ".id")
+if [[ -z "$PROJECT_ID" ]]; then
+  echo "=> Création du projet '${LABEL_STUDIO_PROJECT_NAME}'"
+  curl -s -X POST "http://localhost:${LABEL_STUDIO_PORT}/api/projects" \
+    -H "Authorization: Token ${LABEL_STUDIO_API_KEY}" \
+    -H "Content-Type: application/json" \
+    -d "{
+      \"title\": \"${LABEL_STUDIO_PROJECT_NAME}\",
+      \"description\": \"Projet initialisé automatiquement\",
+      \"label_config\": \"<View><Text name='text' value='$text'/></View>\"
+    }" > /dev/null
+  RESPONSE=$(curl -s "http://localhost:${LABEL_STUDIO_PORT}/api/projects" \
+    -H "Authorization: Token ${LABEL_STUDIO_API_KEY}")
+  PROJECT_ID=$(echo "$RESPONSE" | jq -r ".results[] | select(.title==\"${LABEL_STUDIO_PROJECT_NAME}\") | .id")
 fi
 
-echo "Project ID: ${project_id}"
-
-# Configure S3 source storage
-echo "=> Configuring S3 source storage..."
-s3_config="{
-    \"title\": \"${LABEL_STUDIO_BUCKET_NAME}\",
-    \"bucket\": \"${LABEL_STUDIO_BUCKET_NAME}\",
-    \"prefix\": \"${LABEL_STUDIO_BUCKET_PREFIX}\",
-    \"use_blob_urls\": true,
-    \"presign\": true,
-    \"endpoint_url\": \"${LABEL_STUDIO_BUCKET_ENDPOINT_URL}\",
-    \"access_key\": \"${LABEL_STUDIO_BUCKET_ACCESS_KEY}\",
-    \"secret_key\": \"${LABEL_STUDIO_BUCKET_SECRET_KEY}\",
-    \"region\": \"us-east-1\",
-    \"project\": ${project_id}
-}"
-
-source_storage_response=$(api_call "POST" "/api/storages/s3" "${s3_config}")
-source_storage_id=$(echo "${source_storage_response}" | jq -r ".id")
-
-if [[ -n "${source_storage_id}" ]]; then
-    echo "=> Syncing tasks from S3..."
-    api_call "POST" "/api/storages/s3/${source_storage_id}/sync"
+if [[ -z "$PROJECT_ID" ]]; then
+  echo "Erreur: Impossible de créer ou de récupérer le projet '${LABEL_STUDIO_PROJECT_NAME}'."
+  exit 1
+else
+  echo "Projet '${LABEL_STUDIO_PROJECT_NAME}' ID: $PROJECT_ID"
 fi
 
-# Configure ML backend
-echo "=> Adding GLiNER backend..."
-ml_config="{
-    \"url\": \"http://gliner:${MLBACKEND_PORT}\",
-    \"title\": \"GLiNER\",
-    \"description\": \"GLiNER model for NER\",
-    \"project\": ${project_id}
-}"
+# # Configuration du stockage source S3
+# echo "=> Configuration du stockage source S3..."
+# RESPONSE=$(curl -s -X POST "http://localhost:${LABEL_STUDIO_PORT}/api/storages/s3" \
+#   -H "Authorization: Token ${LABEL_STUDIO_API_KEY}" \
+#   -H "Content-Type: application/json" \
+#   -d "{
+#     \"title\": \"${LABEL_STUDIO_BUCKET_NAME}\",
+#     \"bucket\": \"${LABEL_STUDIO_BUCKET_NAME}\",
+#     \"prefix\": \"${LABEL_STUDIO_BUCKET_PREFIX}\",
+#     \"use_blob_urls\": true,
+#     \"presign\": true,
+#     \"endpoint_url\": \"${LABEL_STUDIO_BUCKET_ENDPOINT_URL}\",
+#     \"access_key\": \"${LABEL_STUDIO_BUCKET_ACCESS_KEY}\",
+#     \"secret_key\": \"${LABEL_STUDIO_BUCKET_SECRET_KEY}\",
+#     \"region\": \"us-east-1\",
+#     \"project\": $PROJECT_ID
+#   }")
+# echo "Réponse configuration S3 : $RESPONSE"
 
-api_call "POST" "/api/ml" "${ml_config}"
+# # Synchronisation des tâches depuis S3
+# echo "=> Synchronisation des tâches depuis S3..."
+# curl -s -X POST "http://localhost:${LABEL_STUDIO_PORT}/api/storages/s3/sync" \
+#   -H "Authorization: Token ${LABEL_STUDIO_API_KEY}"
 
-# Keep container running
+# # Configuration du stockage source S3 via script Python
+# echo "=> Configuration du stockage source S3 via script Python..."
+# python3 /label-studio/create_bucket.py
+
+# # Ajout du backend GLiNER
+# echo "=> Ajout du backend GLiNER..."
+# ML_BACKEND_EXISTS=$(curl -s "http://localhost:${LABEL_STUDIO_PORT}/api/ml" \
+#   -H "Authorization: Token ${LABEL_STUDIO_API_KEY}" | jq -r ".[] | select(.title==\"GLiNER\" and .project==$PROJECT_ID) | .id")
+
+# if [[ -z "$ML_BACKEND_EXISTS" ]]; then
+#   echo "=> Connexion du modèle GLiNER..."
+#   curl -s -X POST "http://localhost:${LABEL_STUDIO_PORT}/api/ml" \
+#     -H "Authorization: Token ${LABEL_STUDIO_API_KEY}" \
+#     -H "Content-Type: application/json" \
+#     -d "{
+#       \"url\": \"http://gliner:${MLBACKEND_PORT}\",
+#       \"title\": \"GLiNER\",
+#       \"description\": \"Modèle GLiNER pour NER\",
+#       \"project\": $PROJECT_ID
+#     }"
+#   echo "Backend GLiNER ajouté au projet '${LABEL_STUDIO_PROJECT_NAME}'."
+# else
+#   echo "Le backend GLiNER est déjà configuré."
+# fi
+
+# Maintenir le processus en cours
 tail -f /dev/null
