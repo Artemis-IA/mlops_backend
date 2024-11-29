@@ -1,0 +1,46 @@
+name: CI/CD for Infrastructure Services
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - loopml
+
+jobs:
+  deploy:
+    name: Deploy Infrastructure Services
+    runs-on: ubuntu-latest
+
+    steps:
+    # Étape 1 : Récupérer le dépôt
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # Étape 2 : Configurer Docker
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v2
+
+    # Étape 3 : Récupérer l'image de l'API Weavestruct
+    - name: Pull API Docker image
+      run: docker pull weavestruct-api:latest
+
+    # Étape 4 : Démarrer les services avec Docker Compose
+    - name: Start services
+      run: |
+        docker-compose down
+        docker-compose pull
+        docker-compose up -d
+
+    # Étape 5 : Vérifier la disponibilité des services
+    - name: Check service availability
+      run: |
+        echo "Checking Weavestruct API health..."
+        curl -f http://localhost:8000/health || exit 1
+        echo "Checking Label Studio..."
+        curl -f http://localhost:5000 || exit 1
+        echo "Checking MLflow..."
+        curl -f http://localhost:5001 || exit 1
+        echo "Checking MinIO..."
+        curl -f http://localhost:9000 || exit 1
+        echo "All services are up and running."

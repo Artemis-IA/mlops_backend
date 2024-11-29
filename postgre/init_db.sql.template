@@ -1,135 +1,121 @@
--- init_db.sql.template
+-- Connexion à la base par défaut (postgres)
+\c postgres
 
--- init_db.sql.template
+-- Supprimer la base de données si elle existe
+DO $$
+BEGIN
+    IF EXISTS (SELECT FROM pg_database WHERE datname = 'project_database') THEN
+        PERFORM pg_terminate_backend(pg_stat_activity.pid)
+        FROM pg_stat_activity
+        WHERE pg_stat_activity.datname = 'project_database'
+          AND pg_stat_activity.pid <> pg_backend_pid();
 
--- C4: Créer l'utilisateur principal pour gérer les services
-CREATE ROLE postgres WITH SUPERUSER LOGIN PASSWORD '${POSTGRE_PASSWORD}';
+        EXECUTE 'DROP DATABASE project_database';
+    END IF;
+END $$;
 
--- C4: Créer l'utilisateur commun pour les bases de données partagées
-CREATE USER ${POSTGRE_USER} WITH PASSWORD '${POSTGRE_PASSWORD}';
+-- Créer une nouvelle base de données
+CREATE DATABASE project_database;
 
--- C4: Créer la base de données principale et attribuer les droits
-CREATE DATABASE ${POSTGRE_DB};
-GRANT ALL PRIVILEGES ON DATABASE ${POSTGRE_DB} TO ${POSTGRE_USER};
+-- Se connecter à la nouvelle base de données
+\c project_database
 
--- C4: Activer l'extension PGVector dans la base de données pour gérer les embeddings
-\c ${POSTGRE_DB}
-CREATE EXTENSION IF NOT EXISTS vector;
+-- Activer les extensions nécessaires
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "vector";
 
--- C4: Créer les utilisateurs et bases de données spécifiques pour MLflow et Label Studio
-CREATE USER ${MLFLOW_USER} WITH PASSWORD '${MLFLOW_PASSWORD}';
-CREATE USER ${LABEL_STUDIO_USER} WITH PASSWORD '${LABEL_STUDIO_PASSWORD}';
+-- Créer les utilisateurs nécessaires
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'project_user') THEN
+        CREATE USER project_user WITH PASSWORD 'secure_password';
+    END IF;
+END $$;
 
-CREATE DATABASE ${MLFLOW_DB};
-GRANT ALL PRIVILEGES ON DATABASE ${MLFLOW_DB} TO ${MLFLOW_USER};
+-- Accorder les droits à l'utilisateur
+GRANT ALL PRIVILEGES ON DATABASE project_database TO project_user;
 
-CREATE DATABASE ${LABEL_STUDIO_DB};
-GRANT ALL PRIVILEGES ON DATABASE ${LABEL_STUDIO_DB} TO ${LABEL_STUDIO_USER};
-
--- C4: Définir le schéma pour MLflow
-\c ${MLFLOW_DB}
-CREATE TABLE IF NOT EXISTS experiments (
-    experiment_id SERIAL PRIMARY KEY, -- C4: Clé primaire unique pour les expériences
-    name VARCHAR(255) UNIQUE NOT NULL, -- C4: Nom unique pour chaque expérience
-    artifact_location TEXT NOT NULL,
-    lifecycle_stage VARCHAR(20) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS runs (
-    run_uuid UUID PRIMARY KEY, -- C4: Identifiant unique pour chaque exécution
-    experiment_id INTEGER REFERENCES experiments(experiment_id), -- C4: Relation entre les exécutions et les expériences
-    user_id TEXT,
-    status VARCHAR(20),
-    start_time BIGINT,
-    end_time BIGINT,
-    artifact_uri TEXT,
-    lifecycle_stage VARCHAR(20),
-    run_data JSONB
-);
-
--- C4: Définir le schéma pour Label Studio
-\c ${LABEL_STUDIO_DB}
-CREATE TABLE IF NOT EXISTS annotations (
-    id SERIAL PRIMARY KEY, -- C4: Clé primaire unique pour les annotations
-    task_id INTEGER NOT NULL, -- C4: Relation entre annotations et tâches
-    annotation_data JSONB,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS tasks (
-    id SERIAL PRIMARY KEY, -- C4: Clé primaire unique pour chaque tâche
-    project_id INTEGER NOT NULL, -- C4: Relation entre tâches et projets
-    task_data JSONB,
-    status VARCHAR(20) NOT NULL
-);
-
--- C4: Attribuer les droits nécessaires à l'utilisateur Label Studio
-GRANT ALL PRIVILEGES ON TABLE annotations, tasks TO ${LABEL_STUDIO_USER};
-
--- C4: Créer les tables communes pour les embeddings et les utilisateurs
-\c ${POSTGRE_DB}
-CREATE TABLE IF NOT EXISTS user_embeddings (
-    user_id UUID PRIMARY KEY, -- C4: Clé primaire unique pour chaque utilisateur
-    embedding vector(768) -- C4: Gestion des embeddings vectoriels
-);
-
+-- Créer les tables et relations
 CREATE TABLE IF NOT EXISTS users (
-    id UUID PRIMARY KEY, -- C4: Clé primaire unique pour chaque utilisateur
-    username VARCHAR(255) UNIQUE NOT NULL, -- C4: Nom d'utilisateur unique
-    password_hash TEXT NOT NULL, -- C4: Mot de passe hashé pour la sécurité (RGPD)
-    email VARCHAR(255) UNIQUE NOT NULL, -- C4: Email unique pour garantir l'unicité
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    username VARCHAR(255) UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- C4: Créer les tables principales pour les documents et entités
-CREATE TABLE documents (
-    id UUID PRIMARY KEY, -- C4: Clé primaire unique pour chaque document
-    title VARCHAR(255) NOT NULL, -- C4: Champ pour le titre du document
-    content TEXT NOT NULL, -- C4: Champ pour le contenu du document
+CREATE TABLE IF NOT EXISTS documents (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE -- C4: Relation entre documents et utilisateurs
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT unique_document_user UNIQUE (title, user_id)
 );
 
-CREATE TABLE entities (
-    id UUID PRIMARY KEY, -- C4: Clé primaire unique pour chaque entité
-    document_id UUID REFERENCES documents(id) ON DELETE CASCADE, -- C4: Relation entre entités et documents
-    type VARCHAR(100) NOT NULL, -- C4: Type d'entité (e.g., PERSON, LOCATION)
-    value VARCHAR(255) NOT NULL, -- C4: Valeur de l'entité
-    start_pos INTEGER NOT NULL, -- C2: Position de début dans le document
-    end_pos INTEGER NOT NULL -- C2: Position de fin dans le document
+CREATE TABLE IF NOT EXISTS entities (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    document_id UUID NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
+    type VARCHAR(100) NOT NULL,
+    value VARCHAR(255) NOT NULL,
+    start_pos INTEGER NOT NULL,
+    end_pos INTEGER NOT NULL
 );
 
--- C2: Créer une table pour les embeddings des documents
-CREATE TABLE document_embeddings (
-    document_id UUID PRIMARY KEY REFERENCES documents(id), -- C4: Relation entre embeddings et documents
-    embedding vector(768) -- C4: Embedding vectoriel (taille fixe)
+CREATE TABLE IF NOT EXISTS document_embeddings (
+    document_id UUID PRIMARY KEY REFERENCES documents(id) ON DELETE CASCADE,
+    embedding vector(768)
 );
 
--- C2: Index pour optimiser les performances des requêtes
-CREATE INDEX idx_documents_user_id ON documents (user_id); -- C2: Accélérer la recherche par utilisateur
-CREATE INDEX idx_entities_document_id ON entities (document_id); -- C2: Accélérer la recherche par document
-CREATE INDEX idx_document_embeddings_embedding ON document_embeddings USING ivfflat (embedding vector_l2_ops) WITH (lists = 100); -- C2: Optimisation pour les recherches vectorielles
+-- Ajouter des index pour optimiser les performances
+CREATE INDEX IF NOT EXISTS idx_documents_user_id ON documents (user_id);
+CREATE INDEX IF NOT EXISTS idx_entities_document_id ON entities (document_id);
 
--- C2: Exemple d'insertion de données pour tester la configuration
-INSERT INTO users (id, username, email, password_hash, created_at) VALUES
-    ('uuid-1', 'john_doe', 'john.doe@example.com', 'hashed_password', CURRENT_TIMESTAMP);
+-- Supprimer les données existantes pour éviter les doublons
+DELETE FROM document_embeddings;
+DELETE FROM entities;
+DELETE FROM documents;
+DELETE FROM users;
 
-INSERT INTO documents (id, title, content, user_id) VALUES
-    ('uuid-doc-1', 'Document Title', 'Document content here...', 'uuid-1');
+-- Vérification préalable pour `htx_user`
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM htx_user WHERE email = 'admin@example.com') THEN
+        DELETE FROM htx_user WHERE email = 'admin@example.com';
+    END IF;
+END $$;
 
-INSERT INTO entities (id, document_id, type, value, start_pos, end_pos) VALUES
-    ('uuid-entity-1', 'uuid-doc-1', 'PERSON', 'John Doe', 0, 8);
+-- Ajouter des données initiales
+-- Utilisateur admin
+INSERT INTO users (id, username, password_hash, email)
+VALUES 
+    (uuid_generate_v4(), 'admin', 'pbkdf2_sha256$600000$examplehash$examplehashedpassword', 'admin@example.com')
+ON CONFLICT (email) DO NOTHING;
 
--- C2: Requêtes pour extraire des données (exemples documentés)
--- 1. Liste des documents pour un utilisateur donné
-SELECT d.id, d.title, d.created_at
-FROM documents d
-JOIN users u ON d.user_id = u.id
-WHERE u.username = 'john_doe';
+-- Document test
+INSERT INTO documents (id, title, content, user_id)
+VALUES 
+    (uuid_generate_v4(), 'Document Test', 'Ceci est un document de test.', 
+    (SELECT id FROM users WHERE username = 'admin'))
+ON CONFLICT DO NOTHING;
 
--- 2. Extraction des entités pour un document
-SELECT e.type, e.value, e.start_pos, e.end_pos
-FROM entities e
-WHERE e.document_id = 'uuid-doc-1';
+-- Entité test
+INSERT INTO entities (id, document_id, type, value, start_pos, end_pos)
+VALUES 
+    (uuid_generate_v4(), 
+    (SELECT id FROM documents WHERE title = 'Document Test' LIMIT 1), 
+    'example_type', 'example_value', 0, 10)
+ON CONFLICT DO NOTHING;
 
--- Fin du script
+-- Embedding test
+INSERT INTO document_embeddings (document_id, embedding)
+VALUES 
+    ((SELECT id FROM documents WHERE title = 'Document Test' LIMIT 1), 
+    array_fill(0.1::float, ARRAY[768])::vector)
+ON CONFLICT DO NOTHING;
+
+-- Vérification des données
+SELECT * FROM users;
+SELECT * FROM documents;
+SELECT * FROM entities;
+SELECT * FROM document_embeddings;
