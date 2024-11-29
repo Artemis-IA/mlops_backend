@@ -8,7 +8,7 @@ WORKDIR /app
 COPY .env .
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    PORT=${PORT:-9097} \
+    PORT=9097 \
     PIP_CACHE_DIR=/.cache \
     WORKERS=1 \
     THREADS=8
@@ -45,4 +45,4 @@ COPY . .
 
 EXPOSE 9097
 
-CMD gunicorn --preload --bind :$PORT --workers $WORKERS --threads $THREADS --timeout 0 _wsgi:app
+CMD ["gunicorn", "--preload", "--bind", ":$PORT", "--workers", "$WORKERS", "--threads", "$THREADS", "--timeout", "0", "_wsgi:app"]

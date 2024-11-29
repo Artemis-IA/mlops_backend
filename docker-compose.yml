@@ -159,6 +159,8 @@ services:
       - POSTGRE_DB=${POSTGRE_DB}
     ports:
       - "${LABEL_STUDIO_PORT}:${LABEL_STUDIO_PORT}"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - label-studio-data:/label-studio/data
       - ./label-studio/create_bucket.py:/label-studio/create_bucket.py
@@ -187,7 +189,6 @@ services:
       - BASIC_AUTH_USER=${GLINER_BASIC_AUTH_USER}
       - BASIC_AUTH_PASS=${GLINER_BASIC_AUTH_PASS}
       - LABEL_STUDIO_ML_BACKENDS=${LABEL_STUDIO_ML_BACKENDS}
-      # set the log level for the model server
       - LOG_LEVEL=DEBUG
       - ANY=PARAMETER
       - WORKERS=1
@@ -214,6 +215,8 @@ services:
       - ./metrics/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - shared-network
     restart: always
@@ -231,7 +234,7 @@ services:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin_password  # Changez ceci pour des raisons de sécurité
     ports:
-      - "3000:3000"
+      - "3001:3001"
     volumes:
       - grafana-data:/var/lib/grafana
     networks:

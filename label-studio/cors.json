@@ -4,16 +4,13 @@
     {
       "Effect": "Allow",
       "Principal": "*",
-      "Action": "s3:GetObject",
-      "Resource": "arn:aws:s3:::labelstudio/*",
-      "Condition": {
-        "StringEquals": {
-          "s3:RequestOrigin": [
-            "http://127.0.0.1:8081",
-            "http://your-domain-name"
-          ]
-        }
-      }
+      "Action": "s3:*",
+      "Resource": [
+        "arn:aws:s3:::myminio/*",
+        "arn:aws:s3:::labelstudio/*",
+        "arn:aws:s3:::labelstudio-input/*",
+        "arn:aws:s3:::labelstudio-output/*"
+      ]
     }
   ]
 }

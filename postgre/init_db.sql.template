@@ -1,39 +1,43 @@
 -- init_db.sql.template
--- Créer l'utilisateur commun pour les services
-CREATE ROLE postgres WITH SUPERUSER LOGIN PASSWORD '${POSTGRES_PASSWORD}';
 
-CREATE USER ${POSTGRES_USER} WITH PASSWORD '${POSTGRES_PASSWORD}';
-CREATE DATABASE ${POSTGRES_DB};
-GRANT ALL PRIVILEGES ON DATABASE ${POSTGRES_DB} TO ${POSTGRES_USER};
+-- init_db.sql.template
 
--- Créer l'extension pgvector dans la base de données commune pour gérer les embeddings
-\c ${POSTGRES_DB}
+-- C4: Créer l'utilisateur principal pour gérer les services
+CREATE ROLE postgres WITH SUPERUSER LOGIN PASSWORD '${POSTGRE_PASSWORD}';
+
+-- C4: Créer l'utilisateur commun pour les bases de données partagées
+CREATE USER ${POSTGRE_USER} WITH PASSWORD '${POSTGRE_PASSWORD}';
+
+-- C4: Créer la base de données principale et attribuer les droits
+CREATE DATABASE ${POSTGRE_DB};
+GRANT ALL PRIVILEGES ON DATABASE ${POSTGRE_DB} TO ${POSTGRE_USER};
+
+-- C4: Activer l'extension PGVector dans la base de données pour gérer les embeddings
+\c ${POSTGRE_DB}
 CREATE EXTENSION IF NOT EXISTS vector;
 
--- Création des utilisateurs et bases de données spécifiques pour MLflow et Label Studio
+-- C4: Créer les utilisateurs et bases de données spécifiques pour MLflow et Label Studio
 CREATE USER ${MLFLOW_USER} WITH PASSWORD '${MLFLOW_PASSWORD}';
 CREATE USER ${LABEL_STUDIO_USER} WITH PASSWORD '${LABEL_STUDIO_PASSWORD}';
 
--- Base de données MLflow pour les métadonnées spécifiques
 CREATE DATABASE ${MLFLOW_DB};
 GRANT ALL PRIVILEGES ON DATABASE ${MLFLOW_DB} TO ${MLFLOW_USER};
 
--- Base de données Label Studio pour les métadonnées spécifiques
 CREATE DATABASE ${LABEL_STUDIO_DB};
 GRANT ALL PRIVILEGES ON DATABASE ${LABEL_STUDIO_DB} TO ${LABEL_STUDIO_USER};
 
--- Schéma pour MLflow dans PostgreSQL
+-- C4: Définir le schéma pour MLflow
 \c ${MLFLOW_DB}
 CREATE TABLE IF NOT EXISTS experiments (
-    experiment_id SERIAL PRIMARY KEY,
-    name VARCHAR(255) UNIQUE NOT NULL,
+    experiment_id SERIAL PRIMARY KEY, -- C4: Clé primaire unique pour les expériences
+    name VARCHAR(255) UNIQUE NOT NULL, -- C4: Nom unique pour chaque expérience
     artifact_location TEXT NOT NULL,
     lifecycle_stage VARCHAR(20) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS runs (
-    run_uuid UUID PRIMARY KEY,
-    experiment_id INTEGER REFERENCES experiments(experiment_id),
+    run_uuid UUID PRIMARY KEY, -- C4: Identifiant unique pour chaque exécution
+    experiment_id INTEGER REFERENCES experiments(experiment_id), -- C4: Relation entre les exécutions et les expériences
     user_id TEXT,
     status VARCHAR(20),
     start_time BIGINT,
@@ -43,37 +47,89 @@ CREATE TABLE IF NOT EXISTS runs (
     run_data JSONB
 );
 
--- Schéma pour Label Studio dans PostgreSQL
+-- C4: Définir le schéma pour Label Studio
 \c ${LABEL_STUDIO_DB}
 CREATE TABLE IF NOT EXISTS annotations (
-    id SERIAL PRIMARY KEY,
-    task_id INTEGER NOT NULL,
+    id SERIAL PRIMARY KEY, -- C4: Clé primaire unique pour les annotations
+    task_id INTEGER NOT NULL, -- C4: Relation entre annotations et tâches
     annotation_data JSONB,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS tasks (
-    id SERIAL PRIMARY KEY,
-    project_id INTEGER NOT NULL,
+    id SERIAL PRIMARY KEY, -- C4: Clé primaire unique pour chaque tâche
+    project_id INTEGER NOT NULL, -- C4: Relation entre tâches et projets
     task_data JSONB,
     status VARCHAR(20) NOT NULL
 );
 
--- Donne les droits à labelstudio_user sur les tables
+-- C4: Attribuer les droits nécessaires à l'utilisateur Label Studio
 GRANT ALL PRIVILEGES ON TABLE annotations, tasks TO ${LABEL_STUDIO_USER};
 
--- Tables communes pour les embeddings
-\c ${POSTGRES_DB}
+-- C4: Créer les tables communes pour les embeddings et les utilisateurs
+\c ${POSTGRE_DB}
 CREATE TABLE IF NOT EXISTS user_embeddings (
-    user_id UUID PRIMARY KEY,
-    embedding vector(768) -- Taille pour les embeddings de type BERT
+    user_id UUID PRIMARY KEY, -- C4: Clé primaire unique pour chaque utilisateur
+    embedding vector(768) -- C4: Gestion des embeddings vectoriels
 );
 
--- Tables communes pour les utilisateurs (partagées entre MLflow et Label Studio)
 CREATE TABLE IF NOT EXISTS users (
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(255) UNIQUE NOT NULL,
-    password_hash TEXT NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
+    id UUID PRIMARY KEY, -- C4: Clé primaire unique pour chaque utilisateur
+    username VARCHAR(255) UNIQUE NOT NULL, -- C4: Nom d'utilisateur unique
+    password_hash TEXT NOT NULL, -- C4: Mot de passe hashé pour la sécurité (RGPD)
+    email VARCHAR(255) UNIQUE NOT NULL, -- C4: Email unique pour garantir l'unicité
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- C4: Créer les tables principales pour les documents et entités
+CREATE TABLE documents (
+    id UUID PRIMARY KEY, -- C4: Clé primaire unique pour chaque document
+    title VARCHAR(255) NOT NULL, -- C4: Champ pour le titre du document
+    content TEXT NOT NULL, -- C4: Champ pour le contenu du document
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE -- C4: Relation entre documents et utilisateurs
+);
+
+CREATE TABLE entities (
+    id UUID PRIMARY KEY, -- C4: Clé primaire unique pour chaque entité
+    document_id UUID REFERENCES documents(id) ON DELETE CASCADE, -- C4: Relation entre entités et documents
+    type VARCHAR(100) NOT NULL, -- C4: Type d'entité (e.g., PERSON, LOCATION)
+    value VARCHAR(255) NOT NULL, -- C4: Valeur de l'entité
+    start_pos INTEGER NOT NULL, -- C2: Position de début dans le document
+    end_pos INTEGER NOT NULL -- C2: Position de fin dans le document
+);
+
+-- C2: Créer une table pour les embeddings des documents
+CREATE TABLE document_embeddings (
+    document_id UUID PRIMARY KEY REFERENCES documents(id), -- C4: Relation entre embeddings et documents
+    embedding vector(768) -- C4: Embedding vectoriel (taille fixe)
+);
+
+-- C2: Index pour optimiser les performances des requêtes
+CREATE INDEX idx_documents_user_id ON documents (user_id); -- C2: Accélérer la recherche par utilisateur
+CREATE INDEX idx_entities_document_id ON entities (document_id); -- C2: Accélérer la recherche par document
+CREATE INDEX idx_document_embeddings_embedding ON document_embeddings USING ivfflat (embedding vector_l2_ops) WITH (lists = 100); -- C2: Optimisation pour les recherches vectorielles
+
+-- C2: Exemple d'insertion de données pour tester la configuration
+INSERT INTO users (id, username, email, password_hash, created_at) VALUES
+    ('uuid-1', 'john_doe', 'john.doe@example.com', 'hashed_password', CURRENT_TIMESTAMP);
+
+INSERT INTO documents (id, title, content, user_id) VALUES
+    ('uuid-doc-1', 'Document Title', 'Document content here...', 'uuid-1');
+
+INSERT INTO entities (id, document_id, type, value, start_pos, end_pos) VALUES
+    ('uuid-entity-1', 'uuid-doc-1', 'PERSON', 'John Doe', 0, 8);
+
+-- C2: Requêtes pour extraire des données (exemples documentés)
+-- 1. Liste des documents pour un utilisateur donné
+SELECT d.id, d.title, d.created_at
+FROM documents d
+JOIN users u ON d.user_id = u.id
+WHERE u.username = 'john_doe';
+
+-- 2. Extraction des entités pour un document
+SELECT e.type, e.value, e.start_pos, e.end_pos
+FROM entities e
+WHERE e.document_id = 'uuid-doc-1';
+
+-- Fin du script

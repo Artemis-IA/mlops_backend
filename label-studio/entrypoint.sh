@@ -28,12 +28,13 @@ export DATABASE_URL="postgresql://${POSTGRE_USER}:${POSTGRE_PASSWORD}@${POSTGRE_
 echo "DATABASE_URL=${DATABASE_URL}"
 
 # Vérification de la disponibilité de MinIO
-echo "=> En attente de la disponibilité de MinIO..."
+echo "=> Waiting for MinIO to be available..."
 until curl -s "${LABEL_STUDIO_BUCKET_ENDPOINT_URL}" > /dev/null; do
+  echo "Waiting for MinIO..."
   sleep 5
-  echo "MinIO n'est pas encore prêt..."
 done
-echo "MinIO est disponible."
+echo "MinIO is available."
+
 
 # Démarrage de Label Studio
 echo "=> Démarrage de Label Studio..."
