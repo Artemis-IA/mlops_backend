@@ -6,7 +6,11 @@ __pycache__/
 # C extensions
 *.so
 
+# Données et fichiers de logs
 data/
+*.log
+*.tmp
+.cache/
 
 # Distribution / packaging
 .Python
@@ -29,8 +33,6 @@ share/python-wheels/
 MANIFEST
 
 # PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
 
@@ -44,7 +46,6 @@ htmlcov/
 .nox/
 .coverage
 .coverage.*
-.cache
 nosetests.xml
 coverage.xml
 *.cover
@@ -57,17 +58,16 @@ cover/
 *.mo
 *.pot
 
-# Django stuff:
-*.log
+# Django stuff
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
 
-# Flask stuff:
+# Flask stuff
 instance/
 .webassets-cache
 
-# Scrapy stuff:
+# Scrapy stuff
 .scrapy
 
 # Sphinx documentation
@@ -96,12 +96,12 @@ celerybeat.pid
 
 # Environments
 .env
+.env.bak/
+.env_old/
 .envrc
 venv/
 venv.bak/
 venv_old/
-.env.bak/
-.env_old/
 
 # Spyder project settings
 .spyderproject
@@ -130,4 +130,15 @@ cython_debug/
 # VS Code
 .vscode/
 
-/label-studio-ml-backend/gliner/data/
+# Spécifique aux services
+label-studio-ml-backend/gliner/data/
+label-studio-ml-backend/**/*.env
+mlflow/**/*.env
+minio-client/**/*.env
+
+# Fichiers sensibles spécifiques
+*.key
+*.crt
+*.pem
+*.secret
+*.config

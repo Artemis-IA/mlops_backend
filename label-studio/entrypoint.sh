@@ -135,3 +135,4 @@ fi
 
 # Maintenir le processus en cours
 tail -f /dev/null
+! HOST variable found in environment, but it must start with http:// or https://, ignore it: labelstudio.mlops.bzh

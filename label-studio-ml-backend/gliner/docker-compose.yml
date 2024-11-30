@@ -9,7 +9,6 @@ services:
         TEST_ENV: ${TEST_ENV}
     env_file:
       - .env
-      # - /home/pi/Documents/IF-SRV/SynologyDrive/MLFLOW-server/.env
     environment:
       # Paramètres d'authentification basique si nécessaire
       - BASIC_AUTH_USER=${GLINER_BASIC_AUTH_USER}

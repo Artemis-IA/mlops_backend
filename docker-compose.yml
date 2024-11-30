@@ -1,4 +1,5 @@
 
+# MLOps Backend Docker Compose
 services:
 
   postgre:
@@ -14,9 +15,6 @@ services:
       - POSTGRES_USER=${POSTGRE_USER}
       - POSTGRES_PASSWORD=${POSTGRE_PASSWORD}
       - POSTGRES_DB=${POSTGRE_DB}
-      - HTTP_PROXY=${HTTP_PROXY}
-      - HTTPS_PROXY=${HTTPS_PROXY}
-      - NO_PROXY=${NO_PROXY},minio,minio-client,postgre,label-studio,mlflow,nginx,localhost,127.0.0.1
     ports:
       - "${POSTGRE_PORT}:${POSTGRE_PORT}"
     volumes:
@@ -35,10 +33,7 @@ services:
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       - MINIO_PORT=${MINIO_PORT}
       - MINIO_CONSOLE_PORT=${MINIO_CONSOLE_PORT}
-      - MINIO_SERVER_URL=http://minio:${MINIO_PORT}         # URL fixe pour l'API
-      - HTTP_PROXY=${HTTP_PROXY}
-      - HTTPS_PROXY=${HTTPS_PROXY}
-      - NO_PROXY=${NO_PROXY},minio,minio-client,postgre,label-studio,mlflow,nginx,localhost,127.0.0.1
+      - MINIO_SERVER_URL=http://minio:${MINIO_PORT}
     command: server --address :${MINIO_PORT} --console-address :${MINIO_CONSOLE_PORT} /data
     ports:
       - "${MINIO_PORT}:${MINIO_PORT}"
@@ -47,10 +42,10 @@ services:
       - minio-data:/data
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.minio.rule=Host(`minio.mlops.bzh`)"
+      - "traefik.http.routers.minio.rule=Host(`${MINIO_HOST}`)"
       - "traefik.http.routers.minio.entrypoints=websecure"
       - "traefik.http.routers.minio.tls.certresolver=cloudflare"
-      - "traefik.http.routers.minio.middlewares=authelia@docker,secureHeaders@docker"
+      - "traefik.http.routers.minio.middlewares=authelia,secureHeaders"
     networks:
       - shared-network
     restart: always
@@ -66,9 +61,6 @@ services:
       - MINIO_ENDPOINT=${MINIO_API_URL}
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
-      - HTTP_PROXY=${HTTP_PROXY}
-      - HTTPS_PROXY=${HTTPS_PROXY}
-      - NO_PROXY=${NO_PROXY},minio,minio-client,postgre,label-studio,mlflow,nginx,localhost,127.0.0.1
     ports:
       - "${MINIO_CLIENT_PORT}:${MINIO_CLIENT_PORT}"
     volumes:
@@ -94,11 +86,10 @@ services:
       - neo4j_logs:/logs
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.neo4j.rule=Host(`neo4j.mlops.bzh`)"
+      - "traefik.http.routers.neo4j.rule=Host(`${NEO4J_HOST}`)"
       - "traefik.http.routers.neo4j.entrypoints=websecure"
       - "traefik.http.routers.neo4j.tls.certresolver=cloudflare"
-      - "traefik.http.routers.neo4j.middlewares=authelia@docker,secureHeaders@docker"
-      - "traefik.http.services.minio.loadbalancer.server.port=${MINIO_CONSOLE_PORT}"
+      - "traefik.http.routers.neo4j.middlewares=authelia,secureHeaders"
 
     networks:
       - shared-network
@@ -117,16 +108,13 @@ services:
       - MLFLOW_S3_ENDPOINT_URL=${MLFLOW_S3_ENDPOINT_URL}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - HTTP_PROXY=${HTTP_PROXY}
-      - HTTPS_PROXY=${HTTPS_PROXY}
-      - NO_PROXY=${NO_PROXY},minio,minio-client,postgre,label-studio,mlflow,nginx,localhost,127.0.0.1
     ports:
       - "${MLFLOW_PORT}:${MLFLOW_PORT}"
     volumes:
       - ./mlflow:/mlflow
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.mlflow.rule=Host(`mlflow.mlops.bzh`)"
+      - "traefik.http.routers.mlflow.rule=Host(`${MLFLOW_HOST}`)"
       - "traefik.http.routers.mlflow.entrypoints=websecure"
       - "traefik.http.routers.mlflow.tls.certresolver=cloudflare"
       - "traefik.http.routers.mlflow.middlewares=authelia@docker,secureHeaders@docker"
@@ -147,11 +135,8 @@ services:
       - LABEL_STUDIO_BUCKET_ACCESS_KEY=${LABEL_STUDIO_BUCKET_ACCESS_KEY}
       - LABEL_STUDIO_BUCKET_SECRET_KEY=${LABEL_STUDIO_BUCKET_SECRET_KEY}
       - LABEL_STUDIO_ROOT_URL=/labelstudio/
-      - DJANGO_CSRF_TRUSTED_ORIGINS=https://labelstudio.mlops.bzh
+      - DJANGO_CSRF_TRUSTED_ORIGINS=${LABEL_STUDIO_HOST}
       - CSRF_COOKIE_SECURE=1
-      - HTTP_PROXY=${HTTP_PROXY}
-      - HTTPS_PROXY=${HTTPS_PROXY}
-      - NO_PROXY=${NO_PROXY},minio,minio-client,postgre,label-studio,mlflow,nginx,localhost,127.0.0.1
       - POSTGRE_HOST=${POSTGRE_HOST}
       - POSTGRE_PORT=${POSTGRE_PORT}
       - POSTGRE_USER=${POSTGRE_USER}
@@ -167,46 +152,13 @@ services:
       - ./label-studio/cors.json:/label-studio/cors.json
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.labelstudio.rule=Host(`labelstudio.mlops.bzh`)"
+      - "traefik.http.routers.labelstudio.rule=Host(`${LABEL_STUDIO_HOST}`)"
       - "traefik.http.routers.labelstudio.entrypoints=websecure"
       - "traefik.http.routers.labelstudio.tls.certresolver=cloudflare"
-      - "traefik.http.routers.labelstudio.middlewares=authelia@docker,secureHeaders@docker"
+      - "traefik.http.routers.labelstudio.middlewares=authelia,secureHeaders"
     networks:
       - shared-network
     restart: always
-
-
-  gliner:
-    container_name: gliner
-    image: humansignal/ml-backend:v0
-    build:
-      context: ./label-studio-ml-backend/gliner
-      args:
-        TEST_ENV: ${TEST_ENV}
-    env_file:
-      - .env
-    environment:
-      - BASIC_AUTH_USER=${GLINER_BASIC_AUTH_USER}
-      - BASIC_AUTH_PASS=${GLINER_BASIC_AUTH_PASS}
-      - LABEL_STUDIO_ML_BACKENDS=${LABEL_STUDIO_ML_BACKENDS}
-      - LOG_LEVEL=DEBUG
-      - ANY=PARAMETER
-      - WORKERS=1
-      - THREADS=8
-      - MODEL_DIR=/mlflow/artifacts/models
-      - LABEL_STUDIO_URL=http://host.docker.internal:${LABEL_STUDIO_PORT}
-      - LABEL_STUDIO_API_KEY=${LABEL_STUDIO_API_KEY}
-      - HF_HOME=/app/huggingface_cache
-    ports:
-      - "${MLBACKEND_PORT}:${MLBACKEND_PORT}"
-    depends_on:
-      - label-studio
-    volumes:
-      - "./data/server:/data"
-      - ~/.cache/huggingface:/app/huggingface_cache
-
-    networks:
-      - shared-network
 
   prometheus:
     image: prom/prometheus:latest
@@ -222,19 +174,17 @@ services:
     restart: always
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.prometheus.rule=Host(`prometheus.mlops.bzh`)"
+      - "traefik.http.routers.prometheus.rule=Host(`${PROMETHEUS_HOST}`)"
       - "traefik.http.routers.prometheus.entrypoints=websecure"
       - "traefik.http.routers.prometheus.tls.certresolver=cloudflare"
-      - "traefik.http.routers.prometheus.middlewares=authelia@docker,secureHeaders@docker"
+      - "traefik.http.routers.prometheus.middlewares=authelia@docker,secureHeaders"
 
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
     environment:
       - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin_password  # Changez ceci pour des raisons de sécurité
-    ports:
-      - "3001:3001"
+      - GF_SECURITY_ADMIN_PASSWORD=admin_password 
     volumes:
       - grafana-data:/var/lib/grafana
     networks:
@@ -242,10 +192,44 @@ services:
     restart: always
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.grafana.rule=Host(`grafana.mlops.bzh`)"
-      - "traefik.http.routers.grafana.entrypoints=websecure"
-      - "traefik.http.routers.grafana.tls.certresolver=cloudflare"
-      - "traefik.http.routers.grafana.middlewares=authelia@docker,secureHeaders@docker"
+      - "traefik.http.routers.labelstudio.rule=Host(`${GRAFANA_HOST}`)"
+      - "traefik.http.routers.labelstudio.entrypoints=websecure"
+      - "traefik.http.routers.labelstudio.tls.certresolver=cloudflare"
+      - "traefik.http.routers.labelstudio.middlewares=authelia,secureHeaders"
+
+  # gliner:
+  #   container_name: gliner
+  #   image: humansignal/ml-backend:v0
+  #   build:
+  #     context: ./label-studio-ml-backend/gliner
+  #     args:
+  #       TEST_ENV: ${TEST_ENV}
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     - BASIC_AUTH_USER=${GLINER_BASIC_AUTH_USER}
+  #     - BASIC_AUTH_PASS=${GLINER_BASIC_AUTH_PASS}
+  #     - LABEL_STUDIO_ML_BACKENDS=${LABEL_STUDIO_ML_BACKENDS}
+  #     - LOG_LEVEL=DEBUG
+  #     - ANY=PARAMETER
+  #     - WORKERS=1
+  #     - THREADS=8
+  #     - MODEL_DIR=/mlflow/artifacts/models
+  #     - LABEL_STUDIO_URL=http://host.docker.internal:${LABEL_STUDIO_PORT}
+  #     - LABEL_STUDIO_API_KEY=${LABEL_STUDIO_API_KEY}
+  #     - HF_HOME=/app/huggingface_cache
+  #   ports:
+  #     - "${MLBACKEND_PORT}:${MLBACKEND_PORT}"
+  #   depends_on:
+  #     - label-studio
+  #   volumes:
+  #     - "./data/server:/data"
+  #     - ~/.cache/huggingface:/app/huggingface_cache
+
+  #   networks:
+  #     - shared-network
+
+
 
 volumes:
   postgre-data:

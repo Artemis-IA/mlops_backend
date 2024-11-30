@@ -77,14 +77,6 @@ DELETE FROM entities;
 DELETE FROM documents;
 DELETE FROM users;
 
--- Vérification préalable pour `htx_user`
-DO $$
-BEGIN
-    IF EXISTS (SELECT 1 FROM htx_user WHERE email = 'admin@example.com') THEN
-        DELETE FROM htx_user WHERE email = 'admin@example.com';
-    END IF;
-END $$;
-
 -- Ajouter des données initiales
 -- Utilisateur admin
 INSERT INTO users (id, username, password_hash, email)
