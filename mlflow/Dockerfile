@@ -2,7 +2,8 @@
 
 FROM ghcr.io/mlflow/mlflow:latest
 
-RUN pip install psycopg2-binary numpy pandas scikit-learn
+RUN apt-get update && apt-get install -y curl iputils-ping \
+    && pip install boto3 psycopg2-binary numpy pandas scikit-learn
 
 COPY wait-for-it.sh /wait-for-it.sh
 COPY entrypoint.sh /entrypoint_mlflow.sh

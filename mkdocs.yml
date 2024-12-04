@@ -1,0 +1,39 @@
+site_name: Documentation Backend Dockerisé
+nav:
+  - Introduction: index.md
+  - Prérequis: prerequisites.md
+  - Structure du Projet: project_structure.md
+  - Configuration:
+      - Fichiers `.env`: configuration/env_files.md
+      - Réseaux et Volumes Docker: configuration/networks_volumes.md
+  - Services:
+      - PostgreSQL: services/postgresql.md
+      - MinIO: services/minio.md
+      - MinIO Client: services/minio_client.md
+      - Neo4j: services/neo4j.md
+      - MLflow: services/mlflow.md
+      - Label Studio: services/label_studio.md
+      - Prometheus: services/prometheus.md
+      - Grafana: services/grafana.md
+  - Déploiement: deployment.md
+  - Sécurité: security.md
+  - Surveillance et Monitoring: monitoring.md
+  - Sauvegardes: backups.md
+  - Dépannage: troubleshooting.md
+  - Contribution: contribution.md
+  - Licence: license.md
+theme:
+  name: material
+  palette:
+    primary: indigo
+    accent: indigo
+  font:
+    text: Roboto
+    code: Roboto Mono
+markdown_extensions:
+  - admonition
+  - codehilite
+  - toc:
+      permalink: true
+plugins:
+  - search

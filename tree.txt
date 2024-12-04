@@ -1,28 +1,35 @@
 .
+├── cors.json
 ├── docker-compose.yml
+├── .env
+├── .env.example
 ├── label-studio
 │   ├── cors.json
-│   ├── data
+│   ├── create_bucket.py
 │   ├── Dockerfile
-│   └── entrypoint.sh
+│   ├── entrypoint_bis.sh
+│   ├── entrypoint.sh
+│   └── .env
+├── metrics
+│   ├── alert_rules.yml
+│   ├── config.yml
+│   └── prometheus.yml
 ├── minio-client
 │   ├── bucket_upload.py
 │   ├── Dockerfile
 │   └── entrypoint.sh
 ├── mlflow
 │   ├── Dockerfile
+│   ├── Dockerfile_mlflow
+│   ├── entrypoint_mlflow.sh
 │   ├── entrypoint.sh
 │   └── wait-for-it.sh
-├── nginx
-│   ├── Dockerfile
-│   ├── entrypoint.sh
-│   └── nginx.conf
+├── ollama_gpu.txt
 ├── postgre
 │   ├── Dockerfile
 │   ├── entrypoint.sh
+│   ├── init_db.pgsql.template
 │   ├── init_db.sql.template
 │   └── install_pgvector.sh
 ├── README.md
-└── tree.txt
 
-41 directories, 273 files
