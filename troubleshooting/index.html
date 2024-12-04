@@ -1,0 +1,1922 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../backups/">
+      
+      
+        <link rel="next" href="../contribution/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.46">
+    
+    
+      
+        <title>Dépannage - Documentation Backend Dockerisé</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.6f8fc17f.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#depannage" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Documentation Backend Dockerisé" class="md-header__button md-logo" aria-label="Documentation Backend Dockerisé" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Documentation Backend Dockerisé
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Dépannage
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Documentation Backend Dockerisé" class="md-nav__button md-logo" aria-label="Documentation Backend Dockerisé" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Documentation Backend Dockerisé
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Introduction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prerequisites/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Prérequis
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../project_structure/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Structure du Projet
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Configuration
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Configuration
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/env_files/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Fichiers `.env`
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/networks_volumes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Réseaux et Volumes Docker
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Services
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Services
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../services/postgresql/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    PostgreSQL
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../services/minio/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    MinIO
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../services/minio_client/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    MinIO Client
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../services/neo4j/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Neo4j
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../services/mlflow/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    MLflow
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../services/label_studio/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Label Studio
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../services/prometheus/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Prometheus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../services/grafana/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Grafana
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployment/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Déploiement
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../security/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Sécurité
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../monitoring/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Surveillance et Monitoring
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../backups/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Sauvegardes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Dépannage
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Dépannage
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-services-qui-ne-demarrent-pas" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Services qui ne démarrent pas
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Services qui ne démarrent pas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#symptomes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Symptômes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solutions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solutions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Solutions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verifier-les-logs-du-conteneur" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vérifier les Logs du Conteneur
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verifier-les-variables-denvironnement" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vérifier les Variables d'Environnement
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verifier-les-dependances" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vérifier les Dépendances
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-problemes-de-connexion-entre-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Problèmes de Connexion entre Services
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Problèmes de Connexion entre Services">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#symptomes_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Symptômes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solutions_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solutions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Solutions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verifier-le-reseau-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vérifier le Réseau Docker
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verifier-les-variables-denvironnement_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vérifier les Variables d'Environnement
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tester-la-connectivite" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tester la Connectivité
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-certificats-tls-invalides" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Certificats TLS Invalides
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Certificats TLS Invalides">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#symptomes_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Symptômes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solutions_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solutions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Solutions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verifier-la-configuration-de-traefik" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vérifier la Configuration de Traefik
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verifier-les-dns" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vérifier les DNS
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#renouvellement-des-certificats" class="md-nav__link">
+    <span class="md-ellipsis">
+      Renouvellement des Certificats
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-performance-degradee" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Performance Dégradée
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Performance Dégradée">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#symptomes_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Symptômes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solutions_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solutions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Solutions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#surveiller-les-ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      Surveiller les Ressources
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optimiser-les-configurations-des-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optimiser les Configurations des Services
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#augmenter-les-ressources-allouees" class="md-nav__link">
+    <span class="md-ellipsis">
+      Augmenter les Ressources Allouées
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-problemes-de-reseau" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Problèmes de Réseau
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Problèmes de Réseau">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#symptomes_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Symptômes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solutions_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solutions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Solutions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verifier-la-configuration-des-labels-traefik" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vérifier la Configuration des Labels Traefik
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redemarrer-traefik" class="md-nav__link">
+    <span class="md-ellipsis">
+      Redémarrer Traefik
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verifier-les-regles-de-pare-feu" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vérifier les Règles de Pare-feu
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-erreurs-dans-les-scripts-dinitialisation" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. Erreurs dans les Scripts d'Initialisation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Erreurs dans les Scripts d'Initialisation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#symptomes_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Symptômes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solutions_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solutions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Solutions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verifier-les-permissions-des-scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vérifier les Permissions des Scripts
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verifier-les-logs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vérifier les Logs
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tester-les-scripts-localement" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tester les Scripts Localement
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-problemes-de-stockage-persistant" class="md-nav__link">
+    <span class="md-ellipsis">
+      7. Problèmes de Stockage Persistant
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Problèmes de Stockage Persistant">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#symptomes_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      Symptômes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solutions_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solutions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Solutions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verifier-les-montages-de-volumes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vérifier les Montages de Volumes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verifier-les-permissions-des-volumes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vérifier les Permissions des Volumes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inspecter-les-volumes-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      Inspecter les Volumes Docker
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conclusion
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contribution/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contribution
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../license/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Licence
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-services-qui-ne-demarrent-pas" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Services qui ne démarrent pas
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Services qui ne démarrent pas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#symptomes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Symptômes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solutions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solutions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Solutions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verifier-les-logs-du-conteneur" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vérifier les Logs du Conteneur
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verifier-les-variables-denvironnement" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vérifier les Variables d'Environnement
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verifier-les-dependances" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vérifier les Dépendances
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-problemes-de-connexion-entre-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Problèmes de Connexion entre Services
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Problèmes de Connexion entre Services">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#symptomes_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Symptômes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solutions_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solutions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Solutions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verifier-le-reseau-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vérifier le Réseau Docker
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verifier-les-variables-denvironnement_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vérifier les Variables d'Environnement
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tester-la-connectivite" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tester la Connectivité
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-certificats-tls-invalides" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Certificats TLS Invalides
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Certificats TLS Invalides">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#symptomes_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Symptômes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solutions_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solutions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Solutions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verifier-la-configuration-de-traefik" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vérifier la Configuration de Traefik
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verifier-les-dns" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vérifier les DNS
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#renouvellement-des-certificats" class="md-nav__link">
+    <span class="md-ellipsis">
+      Renouvellement des Certificats
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-performance-degradee" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. Performance Dégradée
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Performance Dégradée">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#symptomes_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Symptômes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solutions_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solutions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Solutions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#surveiller-les-ressources" class="md-nav__link">
+    <span class="md-ellipsis">
+      Surveiller les Ressources
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#optimiser-les-configurations-des-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      Optimiser les Configurations des Services
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#augmenter-les-ressources-allouees" class="md-nav__link">
+    <span class="md-ellipsis">
+      Augmenter les Ressources Allouées
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-problemes-de-reseau" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. Problèmes de Réseau
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Problèmes de Réseau">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#symptomes_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Symptômes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solutions_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solutions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Solutions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verifier-la-configuration-des-labels-traefik" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vérifier la Configuration des Labels Traefik
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redemarrer-traefik" class="md-nav__link">
+    <span class="md-ellipsis">
+      Redémarrer Traefik
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verifier-les-regles-de-pare-feu" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vérifier les Règles de Pare-feu
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-erreurs-dans-les-scripts-dinitialisation" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. Erreurs dans les Scripts d'Initialisation
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Erreurs dans les Scripts d'Initialisation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#symptomes_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Symptômes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solutions_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solutions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Solutions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verifier-les-permissions-des-scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vérifier les Permissions des Scripts
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verifier-les-logs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vérifier les Logs
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tester-les-scripts-localement" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tester les Scripts Localement
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-problemes-de-stockage-persistant" class="md-nav__link">
+    <span class="md-ellipsis">
+      7. Problèmes de Stockage Persistant
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Problèmes de Stockage Persistant">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#symptomes_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      Symptômes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#solutions_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      Solutions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Solutions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verifier-les-montages-de-volumes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vérifier les Montages de Volumes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verifier-les-permissions-des-volumes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Vérifier les Permissions des Volumes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inspecter-les-volumes-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      Inspecter les Volumes Docker
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conclusion
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="depannage">Dépannage<a class="headerlink" href="#depannage" title="Permanent link">&para;</a></h1>
+<p>Cette section couvre les problèmes courants que vous pourriez rencontrer avec votre backend Dockerisé et fournit des solutions pour les résoudre.</p>
+<h2 id="1-services-qui-ne-demarrent-pas">1. Services qui ne démarrent pas<a class="headerlink" href="#1-services-qui-ne-demarrent-pas" title="Permanent link">&para;</a></h2>
+<h3 id="symptomes">Symptômes<a class="headerlink" href="#symptomes" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Le conteneur ne démarre pas.</li>
+<li>Le service est en état <code>Exited</code>.</li>
+</ul>
+<h3 id="solutions">Solutions<a class="headerlink" href="#solutions" title="Permanent link">&para;</a></h3>
+<h4 id="verifier-les-logs-du-conteneur">Vérifier les Logs du Conteneur<a class="headerlink" href="#verifier-les-logs-du-conteneur" title="Permanent link">&para;</a></h4>
+<p>Consultez les logs du conteneur pour identifier les erreurs spécifiques.</p>
+<div class="codehilite"><pre><span></span><code>docker-compose<span class="w"> </span>logs<span class="w"> </span>&lt;service_name&gt;
+</code></pre></div>
+
+<p><strong>Exemple :</strong></p>
+<div class="codehilite"><pre><span></span><code>docker-compose<span class="w"> </span>logs<span class="w"> </span>postgre
+</code></pre></div>
+
+<h4 id="verifier-les-variables-denvironnement">Vérifier les Variables d'Environnement<a class="headerlink" href="#verifier-les-variables-denvironnement" title="Permanent link">&para;</a></h4>
+<p>Assurez-vous que toutes les variables d'environnement nécessaires sont correctement définies dans le fichier <code>.env</code>.</p>
+<h4 id="verifier-les-dependances">Vérifier les Dépendances<a class="headerlink" href="#verifier-les-dependances" title="Permanent link">&para;</a></h4>
+<p>Assurez-vous que les services dont dépend le conteneur sont en cours d'exécution.</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">depends_on</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">minio</span>
+</code></pre></div>
+
+<h2 id="2-problemes-de-connexion-entre-services">2. Problèmes de Connexion entre Services<a class="headerlink" href="#2-problemes-de-connexion-entre-services" title="Permanent link">&para;</a></h2>
+<h3 id="symptomes_1">Symptômes<a class="headerlink" href="#symptomes_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Les services ne peuvent pas se connecter entre eux.</li>
+<li>Erreurs de connexion dans les logs.</li>
+</ul>
+<h3 id="solutions_1">Solutions<a class="headerlink" href="#solutions_1" title="Permanent link">&para;</a></h3>
+<h4 id="verifier-le-reseau-docker">Vérifier le Réseau Docker<a class="headerlink" href="#verifier-le-reseau-docker" title="Permanent link">&para;</a></h4>
+<p>Assurez-vous que tous les services sont connectés au même réseau Docker (<code>shared-network</code>).</p>
+<div class="codehilite"><pre><span></span><code>docker<span class="w"> </span>network<span class="w"> </span>inspect<span class="w"> </span>shared-network
+</code></pre></div>
+
+<h4 id="verifier-les-variables-denvironnement_1">Vérifier les Variables d'Environnement<a class="headerlink" href="#verifier-les-variables-denvironnement_1" title="Permanent link">&para;</a></h4>
+<p>Vérifiez que les variables d'environnement pour les hôtes et les ports sont correctement définies.</p>
+<h4 id="tester-la-connectivite">Tester la Connectivité<a class="headerlink" href="#tester-la-connectivite" title="Permanent link">&para;</a></h4>
+<p>Utilisez des outils comme <code>ping</code> ou <code>telnet</code> à l'intérieur des conteneurs pour tester la connectivité.</p>
+<div class="codehilite"><pre><span></span><code>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>&lt;container_name&gt;<span class="w"> </span>ping<span class="w"> </span>&lt;service_name&gt;
+docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>&lt;container_name&gt;<span class="w"> </span>telnet<span class="w"> </span>&lt;service_name&gt;<span class="w"> </span>&lt;port&gt;
+</code></pre></div>
+
+<h2 id="3-certificats-tls-invalides">3. Certificats TLS Invalides<a class="headerlink" href="#3-certificats-tls-invalides" title="Permanent link">&para;</a></h2>
+<h3 id="symptomes_2">Symptômes<a class="headerlink" href="#symptomes_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Erreurs de certificat lors de l'accès aux services via HTTPS.</li>
+<li>Avertissements de navigateur concernant la sécurité.</li>
+</ul>
+<h3 id="solutions_2">Solutions<a class="headerlink" href="#solutions_2" title="Permanent link">&para;</a></h3>
+<h4 id="verifier-la-configuration-de-traefik">Vérifier la Configuration de Traefik<a class="headerlink" href="#verifier-la-configuration-de-traefik" title="Permanent link">&para;</a></h4>
+<p>Assurez-vous que Traefik est correctement configuré pour gérer les certificats TLS via Cloudflare.</p>
+<h4 id="verifier-les-dns">Vérifier les DNS<a class="headerlink" href="#verifier-les-dns" title="Permanent link">&para;</a></h4>
+<p>Assurez-vous que les sous-domaines utilisés pointent correctement vers votre serveur Traefik.</p>
+<h4 id="renouvellement-des-certificats">Renouvellement des Certificats<a class="headerlink" href="#renouvellement-des-certificats" title="Permanent link">&para;</a></h4>
+<p>Assurez-vous que les certificats TLS sont valides et renouvelés automatiquement.</p>
+<div class="codehilite"><pre><span></span><code>docker<span class="w"> </span>logs<span class="w"> </span>traefik
+</code></pre></div>
+
+<h2 id="4-performance-degradee">4. Performance Dégradée<a class="headerlink" href="#4-performance-degradee" title="Permanent link">&para;</a></h2>
+<h3 id="symptomes_3">Symptômes<a class="headerlink" href="#symptomes_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Les services sont lents à répondre.</li>
+<li>Haute utilisation des ressources (CPU, mémoire).</li>
+</ul>
+<h3 id="solutions_3">Solutions<a class="headerlink" href="#solutions_3" title="Permanent link">&para;</a></h3>
+<h4 id="surveiller-les-ressources">Surveiller les Ressources<a class="headerlink" href="#surveiller-les-ressources" title="Permanent link">&para;</a></h4>
+<p>Utilisez Grafana et Prometheus pour identifier les goulets d'étranglement.</p>
+<h4 id="optimiser-les-configurations-des-services">Optimiser les Configurations des Services<a class="headerlink" href="#optimiser-les-configurations-des-services" title="Permanent link">&para;</a></h4>
+<p>Ajustez les configurations des services pour mieux utiliser les ressources disponibles.</p>
+<h4 id="augmenter-les-ressources-allouees">Augmenter les Ressources Allouées<a class="headerlink" href="#augmenter-les-ressources-allouees" title="Permanent link">&para;</a></h4>
+<p>Allouez plus de CPU et de mémoire aux conteneurs si nécessaire.</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">postgre</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">deploy</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">limits</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">cpus</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;2.0&#39;</span>
+<span class="w">          </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;4G&#39;</span>
+</code></pre></div>
+
+<h2 id="5-problemes-de-reseau">5. Problèmes de Réseau<a class="headerlink" href="#5-problemes-de-reseau" title="Permanent link">&para;</a></h2>
+<h3 id="symptomes_4">Symptômes<a class="headerlink" href="#symptomes_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Services ne peuvent pas être atteints via les URLs configurées.</li>
+<li>Erreurs de réseau dans les logs.</li>
+</ul>
+<h3 id="solutions_4">Solutions<a class="headerlink" href="#solutions_4" title="Permanent link">&para;</a></h3>
+<h4 id="verifier-la-configuration-des-labels-traefik">Vérifier la Configuration des Labels Traefik<a class="headerlink" href="#verifier-la-configuration-des-labels-traefik" title="Permanent link">&para;</a></h4>
+<p>Assurez-vous que les labels Traefik sont correctement définis pour chaque service.</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">labels</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;traefik.enable=true&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;traefik.http.routers.service_name.rule=Host(`service.mlops.bzh`)&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;traefik.http.routers.service_name.entrypoints=websecure&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;traefik.http.routers.service_name.tls.certresolver=cloudflare&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;traefik.http.routers.service_name.middlewares=authelia@docker,secureHeaders@docker&quot;</span>
+</code></pre></div>
+
+<h4 id="redemarrer-traefik">Redémarrer Traefik<a class="headerlink" href="#redemarrer-traefik" title="Permanent link">&para;</a></h4>
+<p>Redémarrez le conteneur Traefik pour appliquer les modifications de configuration.</p>
+<div class="codehilite"><pre><span></span><code>docker-compose<span class="w"> </span>restart<span class="w"> </span>traefik
+</code></pre></div>
+
+<h4 id="verifier-les-regles-de-pare-feu">Vérifier les Règles de Pare-feu<a class="headerlink" href="#verifier-les-regles-de-pare-feu" title="Permanent link">&para;</a></h4>
+<p>Assurez-vous que les règles de pare-feu permettent le trafic sur les ports nécessaires.</p>
+<h2 id="6-erreurs-dans-les-scripts-dinitialisation">6. Erreurs dans les Scripts d'Initialisation<a class="headerlink" href="#6-erreurs-dans-les-scripts-dinitialisation" title="Permanent link">&para;</a></h2>
+<h3 id="symptomes_5">Symptômes<a class="headerlink" href="#symptomes_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Les scripts d'initialisation ne s'exécutent pas correctement.</li>
+<li>Les services ne sont pas configurés comme prévu.</li>
+</ul>
+<h3 id="solutions_5">Solutions<a class="headerlink" href="#solutions_5" title="Permanent link">&para;</a></h3>
+<h4 id="verifier-les-permissions-des-scripts">Vérifier les Permissions des Scripts<a class="headerlink" href="#verifier-les-permissions-des-scripts" title="Permanent link">&para;</a></h4>
+<p>Assurez-vous que les scripts d'initialisation ont les permissions d'exécution.</p>
+<div class="codehilite"><pre><span></span><code>chmod<span class="w"> </span>+x<span class="w"> </span>/path/to/script.sh
+</code></pre></div>
+
+<h4 id="verifier-les-logs">Vérifier les Logs<a class="headerlink" href="#verifier-les-logs" title="Permanent link">&para;</a></h4>
+<p>Consultez les logs des conteneurs pour identifier les erreurs spécifiques lors de l'exécution des scripts.</p>
+<div class="codehilite"><pre><span></span><code>docker-compose<span class="w"> </span>logs<span class="w"> </span>&lt;service_name&gt;
+</code></pre></div>
+
+<h4 id="tester-les-scripts-localement">Tester les Scripts Localement<a class="headerlink" href="#tester-les-scripts-localement" title="Permanent link">&para;</a></h4>
+<p>Exécutez les scripts manuellement à l'intérieur des conteneurs pour identifier les problèmes.</p>
+<div class="codehilite"><pre><span></span><code>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>&lt;service_name&gt;<span class="w"> </span>/bin/bash
+./script.sh
+</code></pre></div>
+
+<h2 id="7-problemes-de-stockage-persistant">7. Problèmes de Stockage Persistant<a class="headerlink" href="#7-problemes-de-stockage-persistant" title="Permanent link">&para;</a></h2>
+<h3 id="symptomes_6">Symptômes<a class="headerlink" href="#symptomes_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Les données ne sont pas persistées entre les redémarrages des conteneurs.</li>
+<li>Volumes Docker ne sont pas montés correctement.</li>
+</ul>
+<h3 id="solutions_6">Solutions<a class="headerlink" href="#solutions_6" title="Permanent link">&para;</a></h3>
+<h4 id="verifier-les-montages-de-volumes">Vérifier les Montages de Volumes<a class="headerlink" href="#verifier-les-montages-de-volumes" title="Permanent link">&para;</a></h4>
+<p>Assurez-vous que les volumes Docker sont correctement montés dans le fichier <code>docker-compose.yml</code>.</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">postgre-data</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">local</span>
+</code></pre></div>
+
+<h4 id="verifier-les-permissions-des-volumes">Vérifier les Permissions des Volumes<a class="headerlink" href="#verifier-les-permissions-des-volumes" title="Permanent link">&para;</a></h4>
+<p>Assurez-vous que les permissions des répertoires montés permettent l'écriture par les conteneurs.</p>
+<div class="codehilite"><pre><span></span><code>chmod<span class="w"> </span>-R<span class="w"> </span><span class="m">755</span><span class="w"> </span>/path/to/volume
+</code></pre></div>
+
+<h4 id="inspecter-les-volumes-docker">Inspecter les Volumes Docker<a class="headerlink" href="#inspecter-les-volumes-docker" title="Permanent link">&para;</a></h4>
+<p>Vérifiez l'état des volumes Docker.</p>
+<div class="codehilite"><pre><span></span><code>docker<span class="w"> </span>volume<span class="w"> </span>inspect<span class="w"> </span>postgre-data
+</code></pre></div>
+
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
+<p>Le dépannage efficace repose sur une identification précise des symptômes et une approche systématique pour résoudre les problèmes.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.83f73b43.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1555 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../deployment/">
+      
+      
+        <link rel="next" href="../monitoring/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.46">
+    
+    
+      
+        <title>Sécurité - Documentation Backend Dockerisé</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.6f8fc17f.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#securite" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Documentation Backend Dockerisé" class="md-header__button md-logo" aria-label="Documentation Backend Dockerisé" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Documentation Backend Dockerisé
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Sécurité
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Documentation Backend Dockerisé" class="md-nav__button md-logo" aria-label="Documentation Backend Dockerisé" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Documentation Backend Dockerisé
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Introduction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../prerequisites/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Prérequis
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../project_structure/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Structure du Projet
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Configuration
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Configuration
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/env_files/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Fichiers `.env`
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/networks_volumes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Réseaux et Volumes Docker
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Services
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Services
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../services/postgresql/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    PostgreSQL
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../services/minio/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    MinIO
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../services/minio_client/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    MinIO Client
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../services/neo4j/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Neo4j
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../services/mlflow/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    MLflow
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../services/label_studio/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Label Studio
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../services/prometheus/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Prometheus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../services/grafana/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Grafana
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployment/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Déploiement
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Sécurité
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Sécurité
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#gestion-des-secrets" class="md-nav__link">
+    <span class="md-ellipsis">
+      Gestion des Secrets
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Gestion des Secrets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#utiliser-docker-secrets" class="md-nav__link">
+    <span class="md-ellipsis">
+      Utiliser Docker Secrets
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Utiliser Docker Secrets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exemple-de-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exemple de Configuration
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#utiliser-hashicorp-vault" class="md-nav__link">
+    <span class="md-ellipsis">
+      Utiliser HashiCorp Vault
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#certificats-tls" class="md-nav__link">
+    <span class="md-ellipsis">
+      Certificats TLS
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Certificats TLS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuration-de-traefik" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration de Traefik
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration de Traefik">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exemple-de-configuration-de-traefik" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exemple de Configuration de Traefik
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#renouvellement-automatique" class="md-nav__link">
+    <span class="md-ellipsis">
+      Renouvellement Automatique
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mots-de-passe-forts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mots de Passe Forts
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Mots de Passe Forts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bonnes-pratiques" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bonnes Pratiques
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rotation-des-mots-de-passe" class="md-nav__link">
+    <span class="md-ellipsis">
+      Rotation des Mots de Passe
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mises-a-jour-regulieres" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mises à Jour Régulières
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Mises à Jour Régulières">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#images-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      Images Docker
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#systemes-dexploitation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Systèmes d'Exploitation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pare-feu-et-reseaux" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pare-feu et Réseaux
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pare-feu et Réseaux">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuration-des-pare-feu" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration des Pare-feu
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reseaux-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      Réseaux Docker
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authentification-multi-facteur-mfa" class="md-nav__link">
+    <span class="md-ellipsis">
+      Authentification Multi-Facteur (MFA)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Authentification Multi-Facteur (MFA)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mise-en-uvre-de-mfa" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mise en Œuvre de MFA
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Mise en Œuvre de MFA">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exemple-avec-authelia" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exemple avec Authelia
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#avantages-de-mfa" class="md-nav__link">
+    <span class="md-ellipsis">
+      Avantages de MFA
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#securisation-des-fichiers-env" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sécurisation des Fichiers .env
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Sécurisation des Fichiers .env">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bonnes-pratiques_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bonnes Pratiques
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#audits-de-securite" class="md-nav__link">
+    <span class="md-ellipsis">
+      Audits de Sécurité
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Audits de Sécurité">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scans-de-vulnerabilites" class="md-nav__link">
+    <span class="md-ellipsis">
+      Scans de Vulnérabilités
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#audits-reguliers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Audits Réguliers
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conclusion
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../monitoring/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Surveillance et Monitoring
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../backups/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Sauvegardes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../troubleshooting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dépannage
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contribution/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contribution
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../license/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Licence
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#gestion-des-secrets" class="md-nav__link">
+    <span class="md-ellipsis">
+      Gestion des Secrets
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Gestion des Secrets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#utiliser-docker-secrets" class="md-nav__link">
+    <span class="md-ellipsis">
+      Utiliser Docker Secrets
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Utiliser Docker Secrets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exemple-de-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exemple de Configuration
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#utiliser-hashicorp-vault" class="md-nav__link">
+    <span class="md-ellipsis">
+      Utiliser HashiCorp Vault
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#certificats-tls" class="md-nav__link">
+    <span class="md-ellipsis">
+      Certificats TLS
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Certificats TLS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuration-de-traefik" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration de Traefik
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration de Traefik">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exemple-de-configuration-de-traefik" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exemple de Configuration de Traefik
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#renouvellement-automatique" class="md-nav__link">
+    <span class="md-ellipsis">
+      Renouvellement Automatique
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mots-de-passe-forts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mots de Passe Forts
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Mots de Passe Forts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bonnes-pratiques" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bonnes Pratiques
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rotation-des-mots-de-passe" class="md-nav__link">
+    <span class="md-ellipsis">
+      Rotation des Mots de Passe
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mises-a-jour-regulieres" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mises à Jour Régulières
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Mises à Jour Régulières">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#images-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      Images Docker
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#systemes-dexploitation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Systèmes d'Exploitation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pare-feu-et-reseaux" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pare-feu et Réseaux
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pare-feu et Réseaux">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuration-des-pare-feu" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuration des Pare-feu
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reseaux-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      Réseaux Docker
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authentification-multi-facteur-mfa" class="md-nav__link">
+    <span class="md-ellipsis">
+      Authentification Multi-Facteur (MFA)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Authentification Multi-Facteur (MFA)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#mise-en-uvre-de-mfa" class="md-nav__link">
+    <span class="md-ellipsis">
+      Mise en Œuvre de MFA
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Mise en Œuvre de MFA">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#exemple-avec-authelia" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exemple avec Authelia
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#avantages-de-mfa" class="md-nav__link">
+    <span class="md-ellipsis">
+      Avantages de MFA
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#securisation-des-fichiers-env" class="md-nav__link">
+    <span class="md-ellipsis">
+      Sécurisation des Fichiers .env
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Sécurisation des Fichiers .env">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bonnes-pratiques_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Bonnes Pratiques
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#audits-de-securite" class="md-nav__link">
+    <span class="md-ellipsis">
+      Audits de Sécurité
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Audits de Sécurité">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scans-de-vulnerabilites" class="md-nav__link">
+    <span class="md-ellipsis">
+      Scans de Vulnérabilités
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#audits-reguliers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Audits Réguliers
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conclusion
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="securite">Sécurité<a class="headerlink" href="#securite" title="Permanent link">&para;</a></h1>
+<p>La sécurité est une priorité dans votre configuration Dockerisée. Voici quelques recommandations et meilleures pratiques pour renforcer la sécurité de votre infrastructure.</p>
+<h2 id="gestion-des-secrets">Gestion des Secrets<a class="headerlink" href="#gestion-des-secrets" title="Permanent link">&para;</a></h2>
+<h3 id="utiliser-docker-secrets">Utiliser Docker Secrets<a class="headerlink" href="#utiliser-docker-secrets" title="Permanent link">&para;</a></h3>
+<p>Au lieu de stocker les informations sensibles dans des fichiers <code>.env</code>, utilisez <strong>Docker Secrets</strong> pour gérer les secrets de manière sécurisée.</p>
+<h4 id="exemple-de-configuration">Exemple de Configuration<a class="headerlink" href="#exemple-de-configuration" title="Permanent link">&para;</a></h4>
+<ol>
+<li><strong>Créer un Secret</strong></li>
+</ol>
+<p><code>bash
+   echo "your_password" | docker secret create postgre_password -</code></p>
+<ol>
+<li><strong>Utiliser le Secret dans <code>docker-compose.yml</code></strong></li>
+</ol>
+<p>```yaml
+   version: '3.7'</p>
+<p>services:
+     postgre:
+       image: postgres:14
+       secrets:
+         - postgre_password
+       environment:
+         - POSTGRES_PASSWORD_FILE=/run/secrets/postgre_password
+       ...</p>
+<p>secrets:
+     postgre_password:
+       external: true
+   ```</p>
+<h3 id="utiliser-hashicorp-vault">Utiliser HashiCorp Vault<a class="headerlink" href="#utiliser-hashicorp-vault" title="Permanent link">&para;</a></h3>
+<p>Pour une gestion avancée des secrets, envisagez d'utiliser des outils comme <strong>HashiCorp Vault</strong>.</p>
+<h2 id="certificats-tls">Certificats TLS<a class="headerlink" href="#certificats-tls" title="Permanent link">&para;</a></h2>
+<h3 id="configuration-de-traefik">Configuration de Traefik<a class="headerlink" href="#configuration-de-traefik" title="Permanent link">&para;</a></h3>
+<p>Assurez-vous que Traefik est correctement configuré pour gérer les certificats TLS via Cloudflare.</p>
+<h4 id="exemple-de-configuration-de-traefik">Exemple de Configuration de Traefik<a class="headerlink" href="#exemple-de-configuration-de-traefik" title="Permanent link">&para;</a></h4>
+<div class="codehilite"><pre><span></span><code><span class="nt">labels</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;traefik.enable=true&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;traefik.http.routers.service_name.rule=Host(`service.domaine.com`)&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;traefik.http.routers.service_name.entrypoints=websecure&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;traefik.http.routers.service_name.tls.certresolver=cloudflare&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;traefik.http.routers.service_name.middlewares=authelia@docker,secureHeaders@docker&quot;</span>
+</code></pre></div>
+
+<h3 id="renouvellement-automatique">Renouvellement Automatique<a class="headerlink" href="#renouvellement-automatique" title="Permanent link">&para;</a></h3>
+<p>Traefik gère automatiquement le renouvellement des certificats TLS via Let's Encrypt ou Cloudflare. Assurez-vous que votre configuration permet le renouvellement automatique sans interruption de service.</p>
+<h2 id="mots-de-passe-forts">Mots de Passe Forts<a class="headerlink" href="#mots-de-passe-forts" title="Permanent link">&para;</a></h2>
+<h3 id="bonnes-pratiques">Bonnes Pratiques<a class="headerlink" href="#bonnes-pratiques" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Complexité</strong> : Utilisez des mots de passe complexes avec un mélange de lettres, chiffres et caractères spéciaux.</li>
+<li><strong>Longueur</strong> : Optez pour des mots de passe d'au moins 12 caractères.</li>
+<li><strong>Unicité</strong> : Utilisez des mots de passe uniques pour chaque service.</li>
+</ul>
+<h3 id="rotation-des-mots-de-passe">Rotation des Mots de Passe<a class="headerlink" href="#rotation-des-mots-de-passe" title="Permanent link">&para;</a></h3>
+<p>Mettez en place une politique de rotation des mots de passe pour réduire les risques en cas de compromission.</p>
+<h2 id="mises-a-jour-regulieres">Mises à Jour Régulières<a class="headerlink" href="#mises-a-jour-regulieres" title="Permanent link">&para;</a></h2>
+<h3 id="images-docker">Images Docker<a class="headerlink" href="#images-docker" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Mises à Jour des Images</strong> : Gardez vos images Docker à jour pour bénéficier des dernières mises à jour de sécurité.</li>
+</ul>
+<p><code>bash
+  docker-compose pull
+  docker-compose up -d</code></p>
+<h3 id="systemes-dexploitation">Systèmes d'Exploitation<a class="headerlink" href="#systemes-dexploitation" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Patches de Sécurité</strong> : Appliquez régulièrement les patches de sécurité sur les systèmes d'exploitation hôtes.</li>
+</ul>
+<h2 id="pare-feu-et-reseaux">Pare-feu et Réseaux<a class="headerlink" href="#pare-feu-et-reseaux" title="Permanent link">&para;</a></h2>
+<h3 id="configuration-des-pare-feu">Configuration des Pare-feu<a class="headerlink" href="#configuration-des-pare-feu" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Limiter l'Accès</strong> : Limitez l'accès aux ports critiques uniquement aux adresses IP nécessaires.</li>
+<li><strong>Configurer les Règles</strong> : Utilisez des règles de pare-feu pour restreindre le trafic entrant et sortant.</li>
+</ul>
+<h3 id="reseaux-docker">Réseaux Docker<a class="headerlink" href="#reseaux-docker" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Isolation des Réseaux</strong> : Utilisez des réseaux Docker isolés pour segmenter les services et limiter la portée des attaques potentielles.</li>
+</ul>
+<h2 id="authentification-multi-facteur-mfa">Authentification Multi-Facteur (MFA)<a class="headerlink" href="#authentification-multi-facteur-mfa" title="Permanent link">&para;</a></h2>
+<h3 id="mise-en-uvre-de-mfa">Mise en Œuvre de MFA<a class="headerlink" href="#mise-en-uvre-de-mfa" title="Permanent link">&para;</a></h3>
+<p>Si possible, implémentez une authentification multi-facteur pour les interfaces d'administration accessibles via le web (comme Grafana, Prometheus, etc.).</p>
+<h4 id="exemple-avec-authelia">Exemple avec Authelia<a class="headerlink" href="#exemple-avec-authelia" title="Permanent link">&para;</a></h4>
+<p>Utilisez <strong>Authelia</strong> comme middleware pour ajouter une couche d'authentification MFA.</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">labels</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;traefik.http.routers.service_name.middlewares=authelia@docker,secureHeaders@docker&quot;</span>
+</code></pre></div>
+
+<h3 id="avantages-de-mfa">Avantages de MFA<a class="headerlink" href="#avantages-de-mfa" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Sécurité Renforcée</strong> : Réduit le risque de compromission des comptes.</li>
+<li><strong>Protection des Données Sensibles</strong> : Assure que seules les personnes autorisées ont accès aux interfaces critiques.</li>
+</ul>
+<h2 id="securisation-des-fichiers-env">Sécurisation des Fichiers <code>.env</code><a class="headerlink" href="#securisation-des-fichiers-env" title="Permanent link">&para;</a></h2>
+<h3 id="bonnes-pratiques_1">Bonnes Pratiques<a class="headerlink" href="#bonnes-pratiques_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Ne Pas Versionner</strong> : Ne versionnez pas les fichiers <code>.env</code> contenant des informations sensibles.</li>
+<li><strong>Permissions</strong> : Restreignez les permissions des fichiers <code>.env</code> pour qu'ils ne soient accessibles qu'aux utilisateurs nécessaires.</li>
+</ul>
+<p><code>bash
+  chmod 600 .env</code></p>
+<ul>
+<li><strong>Utiliser des Outils de Gestion des Secrets</strong> : Envisagez d'utiliser des outils comme Docker Secrets ou HashiCorp Vault pour une gestion plus sécurisée des informations sensibles.</li>
+</ul>
+<h2 id="audits-de-securite">Audits de Sécurité<a class="headerlink" href="#audits-de-securite" title="Permanent link">&para;</a></h2>
+<h3 id="scans-de-vulnerabilites">Scans de Vulnérabilités<a class="headerlink" href="#scans-de-vulnerabilites" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Outils de Scan</strong> : Utilisez des outils comme <strong>Clair</strong>, <strong>Trivy</strong>, ou <strong>Anchore</strong> pour scanner vos images Docker à la recherche de vulnérabilités.</li>
+</ul>
+<p><code>bash
+  trivy image your_image_name</code></p>
+<h3 id="audits-reguliers">Audits Réguliers<a class="headerlink" href="#audits-reguliers" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Revue de Configuration</strong> : Effectuez régulièrement des revues de configuration pour identifier et corriger les failles de sécurité potentielles.</li>
+<li><strong>Tests d'Intrusion</strong> : Effectuez des tests d'intrusion pour évaluer la résistance de votre infrastructure face aux attaques.</li>
+</ul>
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
+<p>En suivant ces meilleures pratiques de sécurité, vous pouvez renforcer la protection de votre infrastructure Dockerisée et assurer la confidentialité, l'intégrité et la disponibilité de vos données et services.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.83f73b43.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,1032 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../env_files/">
+      
+      
+        <link rel="next" href="../../services/postgresql/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.46">
+    
+    
+      
+        <title>Réseaux et Volumes Docker - Documentation Backend Dockerisé</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6f8fc17f.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#reseaux-et-volumes-docker" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Documentation Backend Dockerisé" class="md-header__button md-logo" aria-label="Documentation Backend Dockerisé" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Documentation Backend Dockerisé
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Réseaux et Volumes Docker
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Documentation Backend Dockerisé" class="md-nav__button md-logo" aria-label="Documentation Backend Dockerisé" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Documentation Backend Dockerisé
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Introduction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../prerequisites/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Prérequis
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../project_structure/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Structure du Projet
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Configuration
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Configuration
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../env_files/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Fichiers `.env`
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Réseaux et Volumes Docker
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Réseaux et Volumes Docker
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#reseaux" class="md-nav__link">
+    <span class="md-ellipsis">
+      Réseaux
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Réseaux">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creation-du-reseau-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      Création du Réseau Docker
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#volumes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Volumes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Volumes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#definition-des-volumes-dans-docker-composeyml" class="md-nav__link">
+    <span class="md-ellipsis">
+      Définition des Volumes dans docker-compose.yml
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description-des-volumes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Description des Volumes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gestion-des-volumes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Gestion des Volumes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#utilisation-des-reseaux-et-volumes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Utilisation des Réseaux et Volumes
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Services
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Services
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/postgresql/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    PostgreSQL
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/minio/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    MinIO
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/minio_client/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    MinIO Client
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/neo4j/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Neo4j
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/mlflow/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    MLflow
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/label_studio/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Label Studio
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/prometheus/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Prometheus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/grafana/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Grafana
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../deployment/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Déploiement
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../security/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Sécurité
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../monitoring/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Surveillance et Monitoring
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../backups/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Sauvegardes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../troubleshooting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dépannage
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contribution/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contribution
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../license/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Licence
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#reseaux" class="md-nav__link">
+    <span class="md-ellipsis">
+      Réseaux
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Réseaux">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#creation-du-reseau-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      Création du Réseau Docker
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#volumes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Volumes
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Volumes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#definition-des-volumes-dans-docker-composeyml" class="md-nav__link">
+    <span class="md-ellipsis">
+      Définition des Volumes dans docker-compose.yml
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#description-des-volumes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Description des Volumes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gestion-des-volumes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Gestion des Volumes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#utilisation-des-reseaux-et-volumes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Utilisation des Réseaux et Volumes
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="reseaux-et-volumes-docker">Réseaux et Volumes Docker<a class="headerlink" href="#reseaux-et-volumes-docker" title="Permanent link">&para;</a></h1>
+<h2 id="reseaux">Réseaux<a class="headerlink" href="#reseaux" title="Permanent link">&para;</a></h2>
+<p>Le projet utilise un réseau Docker externe nommé <code>shared-network</code>. Cela permet aux différents services de communiquer entre eux de manière isolée.</p>
+<h3 id="creation-du-reseau-docker">Création du Réseau Docker<a class="headerlink" href="#creation-du-reseau-docker" title="Permanent link">&para;</a></h3>
+<p>Avant de lancer les services, assurez-vous que le réseau <code>shared-network</code> existe. Sinon, créez-le avec la commande suivante :</p>
+<div class="codehilite"><pre><span></span><code>docker<span class="w"> </span>network<span class="w"> </span>create<span class="w"> </span>shared-network
+</code></pre></div>
+
+<h2 id="volumes">Volumes<a class="headerlink" href="#volumes" title="Permanent link">&para;</a></h2>
+<p>Des volumes Docker persistants sont définis pour conserver les données des services entre les redémarrages des conteneurs. Voici la liste des volumes utilisés :</p>
+<ul>
+<li><code>postgre-data</code></li>
+<li><code>minio-data</code></li>
+<li><code>label-studio-data</code></li>
+<li><code>gliner-data</code></li>
+<li><code>mlflow-data</code></li>
+<li><code>neo4j_data</code></li>
+<li><code>neo4j_logs</code></li>
+<li><code>grafana-data</code></li>
+</ul>
+<h3 id="definition-des-volumes-dans-docker-composeyml">Définition des Volumes dans <code>docker-compose.yml</code><a class="headerlink" href="#definition-des-volumes-dans-docker-composeyml" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><code><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">postgre-data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">minio-data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">label-studio-data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">gliner-data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">mlflow-data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">neo4j_data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">neo4j_logs</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">grafana-data</span><span class="p">:</span>
+</code></pre></div>
+
+<h3 id="description-des-volumes">Description des Volumes<a class="headerlink" href="#description-des-volumes" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>postgre-data</strong> : Stocke les données de PostgreSQL.</li>
+<li><strong>minio-data</strong> : Stocke les données de MinIO.</li>
+<li><strong>label-studio-data</strong> : Stocke les données de Label Studio.</li>
+<li><strong>gliner-data</strong> : (Si utilisé) Stocke les données du service Gliner.</li>
+<li><strong>mlflow-data</strong> : Stocke les données de MLflow.</li>
+<li><strong>neo4j_data</strong> : Stocke les données de Neo4j.</li>
+<li><strong>neo4j_logs</strong> : Stocke les logs de Neo4j.</li>
+<li><strong>grafana-data</strong> : Stocke les données de Grafana.</li>
+</ul>
+<h3 id="gestion-des-volumes">Gestion des Volumes<a class="headerlink" href="#gestion-des-volumes" title="Permanent link">&para;</a></h3>
+<p>Les volumes permettent de persister les données indépendamment du cycle de vie des conteneurs. Cela garantit que les données ne sont pas perdues lors des mises à jour ou des redémarrages des services.</p>
+<h2 id="utilisation-des-reseaux-et-volumes">Utilisation des Réseaux et Volumes<a class="headerlink" href="#utilisation-des-reseaux-et-volumes" title="Permanent link">&para;</a></h2>
+<p>Chaque service dans le <code>docker-compose.yml</code> est connecté au réseau <code>shared-network</code> et utilise les volumes définis pour la persistance des données. Par exemple, pour PostgreSQL :</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">postgre</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgre</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="w">  </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgre-data:/var/lib/postgresql/data</span>
+<span class="w">  </span><span class="nt">networks</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">shared-network</span>
+</code></pre></div>
+
+<p>Assurez-vous que chaque service est correctement configuré pour utiliser les volumes et les réseaux définis, garantissant ainsi une communication fluide et une persistance des données.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.83f73b43.min.js"></script>
+      
+    
+  </body>
+</html>
