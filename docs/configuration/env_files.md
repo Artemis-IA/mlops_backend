@@ -15,11 +15,11 @@ cp .env.example .env
 ```env
 # PostgreSQL
 PG_MAJOR=16
-POSTGRE_USER=your_username
-POSTGRE_PASSWORD=your_password
-POSTGRE_DB=your_database
-POSTGRE_PORT=5432
-POSTGRE_HOST=postgre
+POSTGRES_USER=your_username
+POSTGRES_PASSWORD=your_password
+POSTGRES_DB=your_database
+POSTGRES_PORT=5432
+POSTGRES_HOST=postgre
 
 # MinIO
 MINIO_ROOT_USER=your_minio_user
@@ -41,11 +41,11 @@ LABEL_STUDIO_PORT=8080
 LABEL_STUDIO_BUCKET_ENDPOINT_URL=http://minio:9000
 LABEL_STUDIO_BUCKET_ACCESS_KEY=your_minio_user
 LABEL_STUDIO_BUCKET_SECRET_KEY=your_minio_password
-POSTGRE_HOST=postgre
-POSTGRE_PORT=5432
-POSTGRE_USER=your_username
-POSTGRE_PASSWORD=your_password
-POSTGRE_DB=your_database
+POSTGRES_HOST=postgre
+POSTGRES_PORT=5432
+POSTGRES_USER=your_username
+POSTGRES_PASSWORD=your_password
+POSTGRES_DB=your_database
 DJANGO_CSRF_TRUSTED_ORIGINS=https://labelstudio.domaine.com
 
 # Neo4j
@@ -63,10 +63,10 @@ GF_SECURITY_ADMIN_PASSWORD=admin_password  # Changez ceci pour des raisons de s�
 
 - **PostgreSQL** :
   - `PG_MAJOR` : Version majeure de PostgreSQL.
-  - `POSTGRE_USER` : Nom d'utilisateur pour PostgreSQL.
-  - `POSTGRE_PASSWORD` : Mot de passe pour PostgreSQL.
-  - `POSTGRE_DB` : Nom de la base de données.
-  - `POSTGRE_PORT` : Port sur lequel PostgreSQL écoute.
+  - `POSTGRES_USER` : Nom d'utilisateur pour PostgreSQL.
+  - `POSTGRES_PASSWORD` : Mot de passe pour PostgreSQL.
+  - `POSTGRES_DB` : Nom de la base de données.
+  - `POSTGRES_PORT` : Port sur lequel PostgreSQL écoute.
 
 - **MinIO** :
   - `MINIO_ROOT_USER` : Nom d'utilisateur pour MinIO.
@@ -88,7 +88,7 @@ GF_SECURITY_ADMIN_PASSWORD=admin_password  # Changez ceci pour des raisons de s�
   - `LABEL_STUDIO_BUCKET_ENDPOINT_URL` : URL de l'endpoint du bucket pour Label Studio.
   - `LABEL_STUDIO_BUCKET_ACCESS_KEY` : Clé d'accès pour le bucket.
   - `LABEL_STUDIO_BUCKET_SECRET_KEY` : Clé secrète pour le bucket.
-  - `POSTGRE_*` : Variables de connexion à PostgreSQL.
+  - `POSTGRES_*` : Variables de connexion à PostgreSQL.
   - `DJANGO_CSRF_TRUSTED_ORIGINS` : Origines fiables pour CSRF dans Django.
 
 - **Neo4j** :

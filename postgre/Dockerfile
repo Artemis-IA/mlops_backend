@@ -19,4 +19,5 @@ RUN chmod +x /usr/local/bin/entrypoint.sh && \
     chmod +x /docker-entrypoint-initdb.d/init_db.sql.template
 
 # Set entrypoint
-ENTRYPOINT ["entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+

@@ -13,7 +13,7 @@ Au lieu de stocker les informations sensibles dans des fichiers `.env`, utilisez
 1. **Créer un Secret**
 
    ```bash
-   echo "your_password" | docker secret create postgre_password -
+   echo "your_password" | docker secret create postgres_password -
    ```
 
 2. **Utiliser le Secret dans `docker-compose.yml`**
@@ -25,13 +25,13 @@ Au lieu de stocker les informations sensibles dans des fichiers `.env`, utilisez
      postgre:
        image: postgres:14
        secrets:
-         - postgre_password
+         - postgres_password
        environment:
-         - POSTGRES_PASSWORD_FILE=/run/secrets/postgre_password
+         - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
        ...
    
    secrets:
-     postgre_password:
+     postgres_password:
        external: true
    ```
 

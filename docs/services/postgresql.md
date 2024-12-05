@@ -19,11 +19,11 @@ postgre:
   env_file:
     - .env
   environment:
-    - POSTGRES_USER=${POSTGRE_USER}
-    - POSTGRES_PASSWORD=${POSTGRE_PASSWORD}
-    - POSTGRES_DB=${POSTGRE_DB}
+    - POSTGRES_USER=${POSTGRES_USER}
+    - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    - POSTGRES_DB=${POSTGRES_DB}
   ports:
-    - "${POSTGRE_PORT}:${POSTGRE_PORT}"
+    - "${POSTGRES_PORT}:${POSTGRES_PORT}"
   volumes:
     - postgre-data:/var/lib/postgresql/data
   networks:

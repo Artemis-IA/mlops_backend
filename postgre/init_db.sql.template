@@ -1,113 +1,143 @@
--- Connexion à la base par défaut (postgres)
-\c postgres
-
--- Supprimer la base de données si elle existe
+-- Suppression des bases de données et des utilisateurs si existants
 DO $$
 BEGIN
-    IF EXISTS (SELECT FROM pg_database WHERE datname = 'project_database') THEN
-        PERFORM pg_terminate_backend(pg_stat_activity.pid)
-        FROM pg_stat_activity
-        WHERE pg_stat_activity.datname = 'project_database'
-          AND pg_stat_activity.pid <> pg_backend_pid();
+    -- Terminer toutes les connexions actives aux bases à supprimer
+    PERFORM pg_terminate_backend(pg_stat_activity.pid)
+    FROM pg_stat_activity
+    WHERE pg_stat_activity.datname IN ('postgres_db', 'mlflow_db', 'labelstudio_db')
+      AND pid <> pg_backend_pid();
 
-        EXECUTE 'DROP DATABASE project_database';
+    -- Supprimer les bases de données si elles existent
+    IF EXISTS (SELECT 1 FROM pg_database WHERE datname = 'postgres_db') THEN
+        EXECUTE 'DROP DATABASE postgres_db';
+    END IF;
+
+    IF EXISTS (SELECT 1 FROM pg_database WHERE datname = 'mlflow_db') THEN
+        EXECUTE 'DROP DATABASE mlflow_db';
+    END IF;
+
+    IF EXISTS (SELECT 1 FROM pg_database WHERE datname = 'labelstudio_db') THEN
+        EXECUTE 'DROP DATABASE labelstudio_db';
+    END IF;
+
+    -- Supprimer les utilisateurs si existent
+    IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'postgres_user') THEN
+        EXECUTE 'DROP ROLE postgres_user';
+    END IF;
+
+    IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'mlflow_user') THEN
+        EXECUTE 'DROP ROLE mlflow_user';
+    END IF;
+
+    IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'labelstudio_user') THEN
+        EXECUTE 'DROP ROLE labelstudio_user';
     END IF;
 END $$;
 
--- Créer une nouvelle base de données
-CREATE DATABASE project_database;
+-- Création des utilisateurs et des bases de données principales
+CREATE USER postgres_user WITH PASSWORD 'postgres_password';
+CREATE DATABASE postgres_db;
+GRANT ALL PRIVILEGES ON DATABASE postgres_db TO postgres_user;
 
--- Se connecter à la nouvelle base de données
-\c project_database
-
--- Activer les extensions nécessaires
+-- Activation de l'extension pgvector
+\c postgres_db
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "vector";
 
--- Créer les utilisateurs nécessaires
-DO $$
-BEGIN
-    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'project_user') THEN
-        CREATE USER project_user WITH PASSWORD 'secure_password';
-    END IF;
-END $$;
+-- Création des utilisateurs et bases spécifiques pour MLflow et Label Studio
+CREATE USER mlflow_user WITH PASSWORD 'mlflow_password';
+CREATE DATABASE mlflow_db;
+GRANT ALL PRIVILEGES ON DATABASE mlflow_db TO mlflow_user;
 
--- Accorder les droits à l'utilisateur
-GRANT ALL PRIVILEGES ON DATABASE project_database TO project_user;
+CREATE USER labelstudio_user WITH PASSWORD 'labelstudio_password';
+CREATE DATABASE labelstudio_db;
+GRANT ALL PRIVILEGES ON DATABASE labelstudio_db TO labelstudio_user;
 
--- Créer les tables et relations
+-- Schéma pour MLflow
+\c mlflow_db
+CREATE TABLE IF NOT EXISTS experiments (
+    experiment_id SERIAL PRIMARY KEY,
+    name VARCHAR(255) UNIQUE NOT NULL,
+    artifact_location TEXT NOT NULL,
+    lifecycle_stage VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS runs (
+    run_uuid UUID PRIMARY KEY,
+    experiment_id INTEGER REFERENCES experiments(experiment_id),
+    user_id TEXT,
+    status VARCHAR(20),
+    start_time BIGINT,
+    end_time BIGINT,
+    artifact_uri TEXT,
+    lifecycle_stage VARCHAR(20),
+    run_data JSONB
+);
+
+-- Schéma pour Label Studio
+\c labelstudio_db
+CREATE TABLE IF NOT EXISTS annotations (
+    id SERIAL PRIMARY KEY,
+    task_id INTEGER NOT NULL,
+    annotation_data JSONB,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS tasks (
+    id SERIAL PRIMARY KEY,
+    project_id INTEGER NOT NULL,
+    task_data JSONB,
+    status VARCHAR(20) NOT NULL
+);
+
+-- Retour à la base principale pour les tables communes
+\c postgres_db
+
+-- Créer la table 'documents'
+CREATE TABLE IF NOT EXISTS documents (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    title TEXT,
+    content TEXT,
+    metadata JSONB,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Maintenant, créer la table 'document_embeddings' qui référence 'documents'
+CREATE TABLE IF NOT EXISTS document_embeddings (
+    document_id UUID PRIMARY KEY REFERENCES documents(id) ON DELETE CASCADE,
+    embedding vector(768),
+    metadata JSONB,
+    content TEXT
+);
+
 CREATE TABLE IF NOT EXISTS users (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     username VARCHAR(255) UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS documents (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    content TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    CONSTRAINT unique_document_user UNIQUE (title, user_id)
-);
-
-CREATE TABLE IF NOT EXISTS entities (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    document_id UUID NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
-    type VARCHAR(100) NOT NULL,
-    value VARCHAR(255) NOT NULL,
-    start_pos INTEGER NOT NULL,
-    end_pos INTEGER NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS document_embeddings (
-    document_id UUID PRIMARY KEY REFERENCES documents(id) ON DELETE CASCADE,
+CREATE TABLE IF NOT EXISTS user_embeddings (
+    user_id UUID PRIMARY KEY,
     embedding vector(768)
 );
 
--- Ajouter des index pour optimiser les performances
-CREATE INDEX IF NOT EXISTS idx_documents_user_id ON documents (user_id);
-CREATE INDEX IF NOT EXISTS idx_entities_document_id ON entities (document_id);
-
--- Supprimer les données existantes pour éviter les doublons
-DELETE FROM document_embeddings;
-DELETE FROM entities;
-DELETE FROM documents;
-DELETE FROM users;
-
--- Ajouter des données initiales
--- Utilisateur admin
-INSERT INTO users (id, username, password_hash, email)
-VALUES 
-    (uuid_generate_v4(), 'admin', 'pbkdf2_sha256$600000$examplehash$examplehashedpassword', 'admin@example.com')
+-- Insertion de données initiales
+INSERT INTO users (username, password_hash, email)
+VALUES ('admin', 'pbkdf2_sha256$600000$examplehash$examplehashedpassword', 'admin@example.com')
 ON CONFLICT (email) DO NOTHING;
 
--- Document test
-INSERT INTO documents (id, title, content, user_id)
-VALUES 
-    (uuid_generate_v4(), 'Document Test', 'Ceci est un document de test.', 
-    (SELECT id FROM users WHERE username = 'admin'))
+-- Embedding de test
+INSERT INTO document_embeddings (document_id, embedding, metadata, content)
+VALUES (
+    '4ce0abcb-1ec2-48a7-b237-8aea1f367911',
+    array_fill(0.1::float, ARRAY[768])::vector,
+    '{"author": "Test Author", "category": "Sample"}',
+    'This is a sample document content for testing embeddings.'
+)
 ON CONFLICT DO NOTHING;
 
--- Entité test
-INSERT INTO entities (id, document_id, type, value, start_pos, end_pos)
-VALUES 
-    (uuid_generate_v4(), 
-    (SELECT id FROM documents WHERE title = 'Document Test' LIMIT 1), 
-    'example_type', 'example_value', 0, 10)
-ON CONFLICT DO NOTHING;
-
--- Embedding test
-INSERT INTO document_embeddings (document_id, embedding)
-VALUES 
-    ((SELECT id FROM documents WHERE title = 'Document Test' LIMIT 1), 
-    array_fill(0.1::float, ARRAY[768])::vector)
-ON CONFLICT DO NOTHING;
-
--- Vérification des données
-SELECT * FROM users;
-SELECT * FROM documents;
-SELECT * FROM entities;
-SELECT * FROM document_embeddings;
+-- Index pour optimisation
+CREATE INDEX IF NOT EXISTS idx_user_embeddings_user_id ON user_embeddings (user_id);
+CREATE INDEX IF NOT EXISTS idx_document_embeddings_document_id ON document_embeddings (document_id);

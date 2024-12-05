@@ -18,8 +18,6 @@ services:
       - "${POSTGRES_PORT}:${POSTGRES_PORT}"
     volumes:
       - postgre-data:/var/lib/postgresql/data
-      - ./postgre/init_db.sql.template:/docker-entrypoint-initdb.d/init_db.sql.template:ro
-
     networks:
       - shared-network
     restart: always
@@ -41,12 +39,6 @@ services:
       - "${MINIO_CONSOLE_PORT}:${MINIO_CONSOLE_PORT}"
     volumes:
       - minio-data:/data
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.minio.rule=Host(`${MINIO_HOST}`)"
-      - "traefik.http.routers.minio.entrypoints=https"
-      # - "traefik.http.routers.minio.tls=true"
-      - "traefik.http.routers.minio.middlewares=traefik-auth@file,secureHeaders@file"
     networks:
       - shared-network
     restart: always
@@ -85,14 +77,6 @@ services:
     volumes:
       - neo4j_data:/data
       - neo4j_logs:/logs
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.neo4j.rule=Host(`${NEO4J_HOST}`)"
-      - "traefik.http.routers.neo4j.entrypoints=https"
-      # - "traefik.http.routers.neo4j.tls=true"
-      - "traefik.http.routers.neo4j.middlewares=traefik-auth@file,secureHeaders@file"
-      - "traefik.http.services.minio.loadbalancer.server.port=${MINIO_CONSOLE_PORT}"
-
     networks:
       - shared-network
     restart: unless-stopped 
@@ -114,13 +98,6 @@ services:
       - "${MLFLOW_PORT}:${MLFLOW_PORT}"
     volumes:
       - ./mlflow:/mlflow
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.mlflow.rule=Host(`${MLFLOW_HOST}`)"
-      - "traefik.http.routers.mlflow.entrypoints=https"
-      # - "traefik.http.routers.mlflow.tls=true"
-      - "traefik.http.routers.mlflow.middlewares=traefik-auth@file,secureHeaders@file"
-      # - "traefik.http.services.mlflow.loadbalancer.server.port=5002"
     networks:
       - shared-network
     restart: always
@@ -153,12 +130,6 @@ services:
       - label-studio-data:/label-studio/data
       - ./label-studio/create_bucket.py:/label-studio/create_bucket.py
       - ./label-studio/cors.json:/label-studio/cors.json
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.labelstudio.rule=Host(`${LABEL_STUDIO_HOST}`)"
-      - "traefik.http.routers.labelstudio.entrypoints=https"
-      # - "traefik.http.routers.labelstudio.tls=true"
-      - "traefik.http.routers.labelstudio.middlewares=traefik-auth@file,secureHeaders@file"
     networks:
       - shared-network
     restart: always
@@ -208,12 +179,6 @@ services:
     networks:
       - shared-network
     restart: always
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.prometheus.rule=Host(`${PROMETHEUS_HOST}`)"
-      - "traefik.http.routers.prometheus.entrypoints=https"
-      # - "traefik.http.routers.prometheus.tls=true"
-      - "traefik.http.routers.prometheus.middlewares=traefik-auth@file,secureHeaders@file"
 
   grafana:
     image: grafana/grafana:latest
@@ -228,13 +193,6 @@ services:
     networks:
       - shared-network
     restart: always
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.grafana.rule=Host(`${GRAFANA_HOST}`)"
-      - "traefik.http.routers.grafana.entrypoints=https"
-      # - "traefik.http.routers.grafana.tls=true"
-      - "traefik.http.routers.grafana.middlewares=traefik-auth@file,secureHeaders@file"
-
 volumes:
   postgre-data:
   minio-data:
