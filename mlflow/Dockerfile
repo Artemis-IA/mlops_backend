@@ -1,6 +1,6 @@
 # mlflow/Dockerfile
-
 FROM ghcr.io/mlflow/mlflow:v2.17.2
+
 RUN apt-get update && apt-get install -y curl iputils-ping \
     && pip install boto3 psycopg2-binary numpy pandas scikit-learn
 
