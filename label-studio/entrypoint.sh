@@ -2,7 +2,7 @@
 set -e
 
 # Vérification des variables d'environnement essentielles
-REQUIRED_ENV_VARS=("LABEL_STUDIO_API_KEY" "LABEL_STUDIO_EMAIL" "LABEL_STUDIO_PASSWORD" "POSTGRES_HOST" "POSTGRES_PORT" "POSTGRES_DB" "LABEL_STUDIO_BUCKET_ENDPOINT_URL" "LABEL_STUDIO_BUCKET_ACCESS_KEY" "LABEL_STUDIO_BUCKET_SECRET_KEY")
+REQUIRED_ENV_VARS=("LABEL_STUDIO_API_KEY" "LABEL_STUDIO_EMAIL" "LABEL_STUDIO_PASSWORD" "POSTGRE_HOST" "POSTGRE_PORT" "POSTGRE_DB" "LABEL_STUDIO_BUCKET_ENDPOINT_URL" "LABEL_STUDIO_BUCKET_ACCESS_KEY" "LABEL_STUDIO_BUCKET_SECRET_KEY")
 for var in "${REQUIRED_ENV_VARS[@]}"; do
   if [[ -z "${!var}" ]]; then
     echo "ERREUR : La variable d'environnement $var est manquante. Arrêt du script."
@@ -17,19 +17,19 @@ fi
 
 # Attente de la disponibilité de PostgreSQL
 echo "=> En attente de la disponibilité de PostgreSQL..."
-until pg_isready -h "${POSTGRES_HOST}" -p "${POSTGRES_PORT}" -U "${POSTGRES_USER}"; do
+until pg_isready -h "${POSTGRE_HOST}" -p "${POSTGRE_PORT}" -U "${POSTGRE_USER}"; do
   sleep 5
   echo "PostgreSQL n'est pas encore prêt..."
 done
 echo "PostgreSQL est disponible."
 
 # Configuration de l'URL de la base de données
-export DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}"
+export DATABASE_URL="postgresql://${POSTGRE_USER}:${POSTGRE_PASSWORD}@${POSTGRE_HOST}:${POSTGRE_PORT}/${POSTGRE_DB}"
 echo "DATABASE_URL=${DATABASE_URL}"
 
 # Vérification de la disponibilité de MinIO
-echo "=> Waiting for MinIO to be available..."
-until curl -s "${LABEL_STUDIO_BUCKET_ENDPOINT_URL}" > /dev/null; do
+echo "=> Waiting for MinIO ${MINIO_API_URL} to be available..."
+until curl -s "http://minio:${MINIO_PORT}"  > /dev/null; do
   echo "Waiting for MinIO..."
   sleep 5
 done
@@ -135,4 +135,3 @@ fi
 
 # Maintenir le processus en cours
 tail -f /dev/null
-! HOST variable found in environment, but it must start with http:// or https://, ignore it: labelstudio.mlops.bzh

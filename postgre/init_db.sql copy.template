@@ -1,22 +1,42 @@
+-- Switch to a safe database
 \c postgres
 
--- Create primary user and database
+-- Terminate connections to target databases
+DO $$
+BEGIN
+    PERFORM pg_terminate_backend(pid)
+    FROM pg_stat_activity
+    WHERE datname IN ('${POSTGRES_DB}', '${MLFLOW_DB}', '${LABEL_STUDIO_DB}')
+    AND pid <> pg_backend_pid();
+END $$;
+
+-- Drop databases
+DROP DATABASE IF EXISTS ${POSTGRES_DB};
+DROP DATABASE IF EXISTS ${MLFLOW_DB};
+DROP DATABASE IF EXISTS ${LABEL_STUDIO_DB};
+
+-- Create roles and databases
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '${POSTGRES_USER}') THEN
-        EXECUTE 'CREATE USER ${POSTGRES_USER} WITH PASSWORD ''${POSTGRES_PASSWORD}''';
+        EXECUTE 'CREATE ROLE ${POSTGRES_USER} WITH LOGIN PASSWORD ''${POSTGRES_PASSWORD}''';
     END IF;
 
-    IF NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = '${POSTGRES_DB}') THEN
-        EXECUTE 'CREATE DATABASE ${POSTGRES_DB}';
+    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '${MLFLOW_USER}') THEN
+        EXECUTE 'CREATE ROLE ${MLFLOW_USER} WITH LOGIN PASSWORD ''${MLFLOW_PASSWORD}''';
     END IF;
 
-    EXECUTE format('GRANT ALL PRIVILEGES ON DATABASE %I TO %I', '${POSTGRES_DB}', '${POSTGRES_USER}');
+    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '${LABEL_STUDIO_USER}') THEN
+        EXECUTE 'CREATE ROLE ${LABEL_STUDIO_USER} WITH LOGIN PASSWORD ''${LABEL_STUDIO_PASSWORD}''';
+    END IF;
 END $$;
 
+-- Create databases
+CREATE DATABASE ${POSTGRES_DB} OWNER ${POSTGRES_USER};
+CREATE DATABASE ${MLFLOW_DB} OWNER ${MLFLOW_USER};
+CREATE DATABASE ${LABEL_STUDIO_DB} OWNER ${LABEL_STUDIO_USER};
 
-
--- Switch to primary database for schema creation
+-- Connect to ${POSTGRES_DB} and set up schema
 \c ${POSTGRES_DB}
 
 -- Activate extensions
@@ -75,7 +95,6 @@ VALUES (
 )
 ON CONFLICT (document_id) DO NOTHING;
 
--- Indexes
+-- Create indexes
 CREATE INDEX IF NOT EXISTS idx_user_embeddings_user_id ON user_embeddings (user_id);
 CREATE INDEX IF NOT EXISTS idx_document_embeddings_document_id ON document_embeddings (document_id);
-

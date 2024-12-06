@@ -1,0 +1,43 @@
+# docker-compose.override.yml
+services:
+  postgre:
+    environment:
+      - POSTGRES_HOST=localhost
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+
+  minio:
+    environment:
+      - MINIO_API_URL=http://localhost:${MINIO_PORT}
+    ports:
+      - "${MINIO_PORT}:${MINIO_PORT}"
+      - "${MINIO_CONSOLE_PORT}:${MINIO_CONSOLE_PORT}"
+
+  mlflow:
+    environment:
+      - MLFLOW_TRACKING_URI=http://localhost:${MLFLOW_PORT}
+      - MLFLOW_S3_ENDPOINT_URL=http://localhost:${MINIO_PORT}
+    ports:
+      - "${MLFLOW_PORT}:${MLFLOW_PORT}"
+
+  label-studio:
+    environment:
+      - LABEL_STUDIO_HOST=http://localhost:${LABEL_STUDIO_PORT}
+      - LABEL_STUDIO_BUCKET_ENDPOINT_URL=http://localhost:${MINIO_PORT}
+    ports:
+      - "${LABEL_STUDIO_PORT}:${LABEL_STUDIO_PORT}"
+
+  prometheus:
+    ports:
+      - "${PROMETHEUS_PORT}:${PROMETHEUS_PORT}"
+
+  grafana:
+    ports:
+      - "${GRAFANA_PORT}:${GRAFANA_PORT}"
+
+  neo4j:
+    environment:
+      - NEO4J_HOST=localhost
+    ports:
+      - "${NEO4J_WEB_PORT}:${NEO4J_WEB_PORT}"
+      - "${NEO4J_BOLT_PORT}:${NEO4J_BOLT_PORT}"

@@ -1,4 +1,4 @@
-
+# docker-compose.yml
 services:
 
   postgre:
@@ -16,10 +16,13 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
     ports:
       - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - postgre-data:/var/lib/postgresql/data
-      - ./postgre/init_db.sql.template:/docker-entrypoint-initdb.d/init_db.sql.template:ro
-
     networks:
       - shared-network
     restart: always
@@ -39,14 +42,13 @@ services:
     ports:
       - "${MINIO_PORT}:${MINIO_PORT}"
       - "${MINIO_CONSOLE_PORT}:${MINIO_CONSOLE_PORT}"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://minio:${MINIO_PORT}/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - minio-data:/data
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.minio.rule=Host(`${MINIO_HOST}`)"
-      - "traefik.http.routers.minio.entrypoints=https"
-      # - "traefik.http.routers.minio.tls=true"
-      - "traefik.http.routers.minio.middlewares=traefik-auth@file,secureHeaders@file"
     networks:
       - shared-network
     restart: always
@@ -76,8 +78,8 @@ services:
     image: neo4j:latest
     container_name: neo4j
     ports:
-      - "7474:7474"  # Port for Neo4j web interface
-      - "7687:7687"  # Port for Neo4j Bolt protocol
+      - ${NEO4J_WEB_PORT}:${NEO4J_WEB_PORT}
+      - ${NEO4J_BOLT_PORT}:${NEO4J_BOLT_PORT}
     environment:
       - NEO4J_AUTH=${NEO4J_AUTH}
 
@@ -85,14 +87,6 @@ services:
     volumes:
       - neo4j_data:/data
       - neo4j_logs:/logs
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.neo4j.rule=Host(`${NEO4J_HOST}`)"
-      - "traefik.http.routers.neo4j.entrypoints=https"
-      # - "traefik.http.routers.neo4j.tls=true"
-      - "traefik.http.routers.neo4j.middlewares=traefik-auth@file,secureHeaders@file"
-      - "traefik.http.services.minio.loadbalancer.server.port=${MINIO_CONSOLE_PORT}"
-
     networks:
       - shared-network
     restart: unless-stopped 
@@ -112,15 +106,13 @@ services:
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
     ports:
       - "${MLFLOW_PORT}:${MLFLOW_PORT}"
+    depends_on:
+      postgre:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
     volumes:
       - ./mlflow:/mlflow
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.mlflow.rule=Host(`${MLFLOW_HOST}`)"
-      - "traefik.http.routers.mlflow.entrypoints=https"
-      # - "traefik.http.routers.mlflow.tls=true"
-      - "traefik.http.routers.mlflow.middlewares=traefik-auth@file,secureHeaders@file"
-      # - "traefik.http.services.mlflow.loadbalancer.server.port=5002"
     networks:
       - shared-network
     restart: always
@@ -140,11 +132,11 @@ services:
       - LABEL_STUDIO_ROOT_URL=/labelstudio/
       - DJANGO_CSRF_TRUSTED_ORIGINS=${LABEL_STUDIO_HOST}
       - CSRF_COOKIE_SECURE=1
-      - POSTGRES_HOST=${POSTGRES_HOST}
-      - POSTGRES_PORT=${POSTGRES_PORT}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRE_HOST=${POSTGRE_HOST}
+      - POSTGRE_PORT=${POSTGRE_PORT}
+      - POSTGRE_USER=${POSTGRE_USER}
+      - POSTGRE_PASSWORD=${POSTGRE_PASSWORD}
+      - POSTGRE_DB=${POSTGRE_DB}
     ports:
       - "${LABEL_STUDIO_PORT}:${LABEL_STUDIO_PORT}"
     extra_hosts:
@@ -153,16 +145,34 @@ services:
       - label-studio-data:/label-studio/data
       - ./label-studio/create_bucket.py:/label-studio/create_bucket.py
       - ./label-studio/cors.json:/label-studio/cors.json
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.labelstudio.rule=Host(`${LABEL_STUDIO_HOST}`)"
-      - "traefik.http.routers.labelstudio.entrypoints=https"
-      # - "traefik.http.routers.labelstudio.tls=true"
-      - "traefik.http.routers.labelstudio.middlewares=traefik-auth@file,secureHeaders@file"
     networks:
       - shared-network
     restart: always
 
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./metrics/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - ${PROMETHEUS_PORT}:${PROMETHEUS_PORT}
+    networks:
+      - shared-network
+    restart: always
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin_password
+    ports:
+      - ${GRAFANA_PORT}:${GRAFANA_PORT}
+    volumes:
+      - grafana-data:/var/lib/grafana
+    networks:
+      - shared-network
+    restart: always
 
   # gliner:
   #   container_name: gliner
@@ -195,45 +205,6 @@ services:
 
   #   networks:
   #     - shared-network
-
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus
-    volumes:
-      - ./metrics/prometheus.yml:/etc/prometheus/prometheus.yml
-    ports:
-      - "9090:9090"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    networks:
-      - shared-network
-    restart: always
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.prometheus.rule=Host(`${PROMETHEUS_HOST}`)"
-      - "traefik.http.routers.prometheus.entrypoints=https"
-      # - "traefik.http.routers.prometheus.tls=true"
-      - "traefik.http.routers.prometheus.middlewares=traefik-auth@file,secureHeaders@file"
-
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin_password
-    ports:
-      - "3001:3001"
-    volumes:
-      - grafana-data:/var/lib/grafana
-    networks:
-      - shared-network
-    restart: always
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.grafana.rule=Host(`${GRAFANA_HOST}`)"
-      - "traefik.http.routers.grafana.entrypoints=https"
-      # - "traefik.http.routers.grafana.tls=true"
-      - "traefik.http.routers.grafana.middlewares=traefik-auth@file,secureHeaders@file"
 
 volumes:
   postgre-data:

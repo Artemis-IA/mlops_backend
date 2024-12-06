@@ -2,7 +2,7 @@
 set -e
 
 # Vérification des variables d'environnement essentielles
-if [[ -z "${LABEL_STUDIO_EMAIL}" || -z "${LABEL_STUDIO_PASSWORD}" || -z "${POSTGRES_HOST}" || -z "${POSTGRES_PORT}" || -z "${POSTGRES_DB}" ]]; then
+if [[ -z "${LABEL_STUDIO_EMAIL}" || -z "${LABEL_STUDIO_PASSWORD}" || -z "${POSTGRE_HOST}" || -z "${POSTGRE_PORT}" || -z "${POSTGRE_DB}" ]]; then
   echo "ERREUR : Variables d'environnement manquantes. Arrêt du script."
   exit 1
 fi
@@ -14,14 +14,14 @@ fi
 
 # Attente de la disponibilité de PostgreSQL
 echo "=> En attente de la disponibilité de PostgreSQL..."
-until pg_isready -h ${POSTGRES_HOST} -p ${POSTGRES_PORT} -U ${POSTGRES_USER}; do
+until pg_isready -h ${POSTGRE_HOST} -p ${POSTGRE_PORT} -U ${POSTGRE_USER}; do
   sleep 5
   echo "PostgreSQL n'est pas encore prêt..."
 done
 echo "PostgreSQL est disponible."
 
 # Configuration de l'URL de la base de données
-export DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}"
+export DATABASE_URL="postgresql://${POSTGRE_USER}:${POSTGRE_PASSWORD}@${POSTGRE_HOST}:${POSTGRE_PORT}/${POSTGRE_DB}"
 
 # # Check if the project exists before initializing
 # if ! label-studio list | grep -q "${LABEL_STUDIO_PROJECT_NAME}"; then

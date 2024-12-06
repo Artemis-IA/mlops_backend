@@ -10,13 +10,13 @@ until pg_isready -h localhost -p 5432; do
   sleep 2
 done
 
-# Initialize pgvector
-if [ -d /tmp/pgvector ]; then
-  cd /tmp/pgvector
-  make && make install
-else
-  echo "pgvector directory not found!"
-fi
+# # Initialize pgvector
+# if [ -d /tmp/pgvector ]; then
+#   cd /tmp/pgvector
+#   make && make install
+# else
+#   echo "pgvector directory not found!"
+# fi
 
 # Substitute environment variables in SQL template and create a processed SQL file
 if [ -f /docker-entrypoint-initdb.d/init_db.sql.template ]; then

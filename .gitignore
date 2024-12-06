@@ -142,3 +142,4 @@ minio-client/**/*.env
 *.pem
 *.secret
 *.config
+.env

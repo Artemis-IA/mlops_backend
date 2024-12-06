@@ -1,0 +1,59 @@
+# docker-compose.traefik.yml
+services:
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    restart: unless-stopped
+    networks:
+      - shared-network
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/traefik.yml:/traefik.yml:ro
+      - ./letsencrypt/acme.json:/acme.json
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`${TRAEFIK_HOST}`)"
+      - "traefik.http.routers.traefik.entrypoints=https"
+
+  minio:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.minio.rule=Host(`${MINIO_HOST}`)"
+      - "traefik.http.routers.minio.entrypoints=https"
+
+  neo4j:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.neo4j.rule=Host(`${NEO4J_HOST}`)"
+      - "traefik.http.routers.neo4j.entrypoints=https"
+
+  mlflow:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mlflow.rule=Host(`${MLFLOW_HOST}`)"
+      - "traefik.http.routers.mlflow.entrypoints=https"
+
+  label-studio:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.labelstudio.rule=Host(`${LABEL_STUDIO_HOST}`)"
+      - "traefik.http.routers.labelstudio.entrypoints=https"
+
+  prometheus:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.prometheus.rule=Host(`${PROMETHEUS_HOST}`)"
+      - "traefik.http.routers.prometheus.entrypoints=https"
+
+  grafana:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana.rule=Host(`${GRAFANA_HOST}`)"
+      - "traefik.http.routers.grafana.entrypoints=https"
+
+networks:
+  shared-network:
+    external: true
