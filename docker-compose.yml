@@ -14,6 +14,8 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+
     ports:
       - "${POSTGRES_PORT}:${POSTGRES_PORT}"
     healthcheck:
@@ -23,6 +25,21 @@ services:
       retries: 5
     volumes:
       - postgre-data:/var/lib/postgresql/data
+      - ./postgre/init_db.sql.template:/docker-entrypoint-initdb.d/init_db.sql.template
+
+    networks:
+      - shared-network
+    restart: always
+
+  pgmonitor:
+    container_name: pgmonitor
+    image: quay.io/prometheuscommunity/postgres-exporter:latest
+    environment:
+      - DATA_SOURCE_NAME=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgre:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable
+    ports:
+      - ${PGMONITOR_PORT}:${PGMONITOR_PORT}
+    depends_on:
+      - postgre
     networks:
       - shared-network
     restart: always
@@ -106,11 +123,11 @@ services:
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
     ports:
       - "${MLFLOW_PORT}:${MLFLOW_PORT}"
-    depends_on:
-      postgre:
-        condition: service_healthy
-      minio:
-        condition: service_healthy
+    # depends_on:
+    #   postgre:
+    #     condition: service_healthy
+    #   minio:
+    #     condition: service_healthy
     volumes:
       - ./mlflow:/mlflow
     networks:
@@ -170,6 +187,8 @@ services:
       - ${GRAFANA_PORT}:${GRAFANA_PORT}
     volumes:
       - grafana-data:/var/lib/grafana
+      - ./metrics/grafana/provisioning:/etc/grafana/provisioning # Sauvegarde des configurations et dashboards
+
     networks:
       - shared-network
     restart: always
@@ -215,6 +234,7 @@ volumes:
   neo4j_data:
   neo4j_logs:
   grafana-data:
+    external: true
 
 networks:
   shared-network:

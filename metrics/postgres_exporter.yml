@@ -1,0 +1,6 @@
+databases:
+  - dbname: ${POSTGRES_DB}
+exclude_databases:
+  - template0
+  - template1
+  - postgres

@@ -16,6 +16,10 @@ scrape_configs:
     static_configs:
       - targets: ['prometheus:9090']
 
+  - job_name: 'pgmonitor'
+    static_configs:
+      - targets: ['pgmonitor:9187']
+
   - job_name: 'label-studio'
     metrics_path: '/metrics'
     static_configs:
