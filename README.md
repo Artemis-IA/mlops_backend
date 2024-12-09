@@ -1,12 +1,12 @@
-Ci-dessous une version la plus complète et détaillée possible du README, prenant en compte l’intégralité du dépôt, le contenu du `docker-compose.yml` fourni, ainsi que les composants présents ou prévus. Toutes les informations sont présentées en français, et de manière exhaustive, afin de servir de référence globale à votre projet.
+# 🚇 Backend MLOps
 
----
+## Bases de Données & Stockage Objet: PostgreSQL/PGVector, Neo4J, Minio
+## Middleware Models & Data managment : MLflow & Label Studio/ML Backend
+ ## Monitoring  & Intégrations : Prometheus, Grafana, Postgres Exporter, Neo4J Exporter
 
-# 🚀 Plateforme MLOps : MLflow, Label Studio, Bases de Données, Stockage Objet, Monitoring, Graphiques & Intégrations ML
+Bienvenue dans ce projet MLOps complet, conçu pour offrir un environnement de travail unifié autour du cycle de vie des données et des modèles de Machine Learning. De l’acquisition et l’annotation des données, à l’entraînement, la mise en production, le suivi expérimental, le monitoring et la visualisation, cette plateforme met en place une architecture cohérente, conteneurisée via **Docker Compose**.
 
-Bienvenue dans ce projet MLOps complet, conçu pour offrir un environnement de travail unifié autour du cycle de vie du Machine Learning. De l’acquisition et l’annotation des données, à l’entraînement, la mise en production, le suivi expérimental, le monitoring et la visualisation, cette plateforme met en place une architecture cohérente, conteneurisée via **Docker Compose**.
-
-Pour plus de détails, veuillez consulter la [**Documentation & Guide du Projet**](https://artemis-ia.github.io/mlops_backend/).
+#### Pour plus de détails, veuillez consulter la [**Documentation & Guide du Projet**](https://artemis-ia.github.io/mlops_backend/).
 
 ---
 
