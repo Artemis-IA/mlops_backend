@@ -1,5 +1,9 @@
 # 🚇 Backend MLOps ➿
+---
+Ce projet vise à offrir un environnement de travail unifié autour du cycle de vie des données et des modèles de Machine Learning. De l’acquisition et l’annotation des données, à l’entraînement, la mise en production, le suivi expérimental, le monitoring et la visualisation, ce backend propose une architecture $tructurée et conteneurisée via **Docker Compose**.
 
+#### Pour plus de détails, veuillez consulter la [**Documentation & Guide du Projet**](https://artemis-ia.github.io/mlops_backend/).
+---
 #### ☁️ 🧠 Bases de Données & Stockage Objet
 #### PostgreSQL - PGVector - Neo4J - Minio
 ---
@@ -8,11 +12,6 @@
 ---
 #### 💻 ⚙️ Monitoring  & Intégrations
 #### Prometheus - Grafana
----
-Ce projet vise à offrir un environnement de travail unifié autour du cycle de vie des données et des modèles de Machine Learning. De l’acquisition et l’annotation des données, à l’entraînement, la mise en production, le suivi expérimental, le monitoring et la visualisation, ce backend propose une architecture $tructurée et conteneurisée via **Docker Compose**.
-
-#### Pour plus de détails, veuillez consulter la [**Documentation & Guide du Projet**](https://artemis-ia.github.io/mlops_backend/).
-
 ---
 
 ## 🎯 Objectifs du Projet
@@ -159,23 +158,9 @@ cd mlops_backend
 ### 2. Fichier d’Environnement
 
 ```bash
-# Copier le fichier d'exemple et l'éditer
-cp .env.example .env
-nano .env  # ou vim .env
+# Utiliser le template fourni
+mv .env.example .env
 ```
-
-```bash
-cp .env.example .env
-nano .env
-```
-
-Variables à adapter :
-- **PostgreSQL** : `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, `POSTGRES_PORT`
-- **MinIO** : `MINIO_ROOT_USER`, `MINIO_ROOT_PASSWORD`, `MINIO_PORT`, `MINIO_CONSOLE_PORT`
-- **MLflow** : `MLFLOW_PORT`, `MLFLOW_BACKEND_STORE_URI`, `MLFLOW_ARTIFACT_ROOT`
-- **Label Studio** : `LABEL_STUDIO_PORT`, `LABEL_STUDIO_BUCKET_*`, `POSTGRE_*`
-- **Neo4j** : `NEO4J_WEB_PORT`, `NEO4J_BOLT_PORT`, `NEO4J_AUTH`
-- **Prometheus, Grafana** : `PROMETHEUS_PORT`, `GRAFANA_PORT`
 
 ### 3. Lancement des Services
 
@@ -263,7 +248,7 @@ volumes:
   mlflow-data:        # Données MLflow (option si monté)
 ```
 
-**Remarque** : `grafana-data` est marqué comme volume externe pour éviter les pertes accidentelles. Adaptez vos stratégies de backup/restauration selon vos besoins.
+**Remarque** : `grafana-data` est marqué comme volume externe pour éviter les pertes accidentelles des dashboards. Adaptez vos stratégies de backup/restauration selon vos besoins.
 
 ---
 
