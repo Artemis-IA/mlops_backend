@@ -7,4 +7,13 @@ providers:
     disableDeletion: false
     editable: true
     options:
-      path: /etc/grafana/provisioning/dashboards/
+      path: /etc/grafana/provisioning/dashboards/postgresql
+
+  - name: 'Neo4J Dashboards'
+    orgId: 1
+    folder: 'Neo4J'
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /etc/grafana/provisioning/dashboards/neo4j

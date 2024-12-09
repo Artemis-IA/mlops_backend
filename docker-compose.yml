@@ -108,6 +108,25 @@ services:
       - shared-network
     restart: unless-stopped 
 
+  neo4j-metrics:
+    container_name: neo4j-metrics
+    build:
+      context: ./neo4j_exporter
+      dockerfile: Dockerfile
+    ports:
+      - ${NEO4J_METRICS_PORT}:${NEO4J_METRICS_PORT}
+    env_file:
+      - .env
+    environment:
+      - NEO4J_SERVICE=neo4j
+      - NEO4J_BOLT_PORT=${NEO4J_BOLT_PORT}
+      - NEO4J_METRICS_PORT=${NEO4J_METRICS_PORT}
+
+    networks:
+      - shared-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: always
   mlflow:
     container_name: mlflow
     build:
