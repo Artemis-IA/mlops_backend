@@ -1,8 +1,8 @@
-# 🚇 💻⚙️🧠🤖🏭☁️Backend MLOps
+# 🚇 Backend MLOps
 
-## Bases de Données & Stockage Objet: PostgreSQL/PGVector, Neo4J, Minio
-## Middleware Models & Data managment : MLflow & Label Studio/ML Backend
- ## Monitoring  & Intégrations : Prometheus, Grafana, Postgres Exporter, Neo4J Exporter
+### ☁️ 🧠 Bases de Données & Stockage Objet: PostgreSQL/PGVector, Neo4J, Minio
+### 🤖 🏭 Middleware Models & Data managment : MLflow & Label Studio/ML Backend
+### 💻 ⚙️ Monitoring  & Intégrations : Prometheus, Grafana, Postgres Exporter, Neo4J Exporter
 
 Bienvenue dans ce projet MLOps complet, conçu pour offrir un environnement de travail unifié autour du cycle de vie des données et des modèles de Machine Learning. De l’acquisition et l’annotation des données, à l’entraînement, la mise en production, le suivi expérimental, le monitoring et la visualisation, cette plateforme met en place une architecture cohérente, conteneurisée via **Docker Compose**.
 
