@@ -1,14 +1,14 @@
 # 🚇 Backend MLOps ➿
 
 #### ☁️ 🧠 Bases de Données & Stockage Objet
-#### PostgreSQL/PGVector, Neo4J, Minio
+#### PostgreSQL - PGVector - Neo4J - Minio
 ---
 #### 🤖 🏭 Middleware Models & Data managment
-#### MLflow & Label Studio/ML Backend
+#### MLflow - Label Studio - ML Backend
 ---
 #### 💻 ⚙️ Monitoring  & Intégrations
-#### Prometheus & Grafana
-
+#### Prometheus - Grafana
+---
 Ce projet vise à offrir un environnement de travail unifié autour du cycle de vie des données et des modèles de Machine Learning. De l’acquisition et l’annotation des données, à l’entraînement, la mise en production, le suivi expérimental, le monitoring et la visualisation, ce backend propose une architecture $tructurée et conteneurisée via **Docker Compose**.
 
 #### Pour plus de détails, veuillez consulter la [**Documentation & Guide du Projet**](https://artemis-ia.github.io/mlops_backend/).
