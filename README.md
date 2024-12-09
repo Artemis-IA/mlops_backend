@@ -2,8 +2,10 @@
 
 #### ☁️ 🧠 Bases de Données & Stockage Objet
 #### PostgreSQL/PGVector, Neo4J, Minio
+---
 #### 🤖 🏭 Middleware Models & Data managment
 #### MLflow & Label Studio/ML Backend
+---
 #### 💻 ⚙️ Monitoring  & Intégrations
 #### Prometheus & Grafana
 
