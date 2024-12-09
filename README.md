@@ -276,8 +276,8 @@ volumes:
 ## 🏗 Contribuer & Évolutions Futures
 
 - Ajout de nouveaux ML backends pour étendre les capacités (OCR, NLP, Vision).
-- Intégration de CI/CD pour déploiement automatique des modèles.
-- Extension des dashboards Grafana et exploitation de Neo4j pour des analyses plus poussées.
+- Intégration plus poussées de CI/CD pour déploiement automatique des modèles.
+- Extension des dashboards Grafana et exploitation de Neo4j pour des analyses sur les graphes.
 - Intégration d’outils de sécurité, de gouvernance et de contrôle qualité des données.
 
 ---
@@ -287,5 +287,3 @@ volumes:
 Ce projet est distribué sous licence MIT. Reportez-vous au fichier [LICENSE](LICENSE) pour les détails.
 
 ---
-
-Cette plateforme tends à proposer un socle complet pour orchestrer des workflows ML : de la préparation et l’annotation de données, jusqu’au suivi expérimental, au monitoring, à l’amélioration continue, et à la mise en place d’un pipeline MLOps.
