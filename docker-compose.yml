@@ -26,9 +26,10 @@ services:
     volumes:
       - postgre-data:/var/lib/postgresql/data
       - ./postgre/init_db.sql.template:/docker-entrypoint-initdb.d/init_db.sql.template
-
     networks:
       - shared-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     restart: always
 
   pgmonitor:
@@ -42,7 +43,10 @@ services:
       - postgre
     networks:
       - shared-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     restart: always
+
 
   minio:
     container_name: minio
@@ -68,6 +72,8 @@ services:
       - minio-data:/data
     networks:
       - shared-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     restart: always
 
   minio-client:
@@ -87,9 +93,12 @@ services:
       - ./label-studio/cors.json:/label-studio/cors.json
     networks:
       - shared-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - minio
     restart: always
+
 
   neo4j:
     image: neo4j:latest
@@ -106,6 +115,8 @@ services:
       - neo4j_logs:/logs
     networks:
       - shared-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     restart: unless-stopped 
 
   neo4j-metrics:
@@ -121,12 +132,13 @@ services:
       - NEO4J_SERVICE=neo4j
       - NEO4J_BOLT_PORT=${NEO4J_BOLT_PORT}
       - NEO4J_METRICS_PORT=${NEO4J_METRICS_PORT}
-
     networks:
       - shared-network
     extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: always
+
+
   mlflow:
     container_name: mlflow
     build:
@@ -151,6 +163,8 @@ services:
       - ./mlflow:/mlflow
     networks:
       - shared-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     restart: always
 
   label-studio:
@@ -175,14 +189,14 @@ services:
       - POSTGRE_DB=${POSTGRE_DB}
     ports:
       - "${LABEL_STUDIO_PORT}:${LABEL_STUDIO_PORT}"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     volumes:
       - label-studio-data:/label-studio/data
       - ./label-studio/create_bucket.py:/label-studio/create_bucket.py
       - ./label-studio/cors.json:/label-studio/cors.json
     networks:
       - shared-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     restart: always
 
   prometheus:
@@ -194,6 +208,8 @@ services:
       - ${PROMETHEUS_PORT}:${PROMETHEUS_PORT}
     networks:
       - shared-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     restart: always
 
   grafana:
@@ -207,9 +223,10 @@ services:
     volumes:
       - grafana-data:/var/lib/grafana
       - ./metrics/grafana/provisioning:/etc/grafana/provisioning # Sauvegarde des configurations et dashboards
-
     networks:
       - shared-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     restart: always
 
   # gliner:
@@ -240,7 +257,6 @@ services:
   #   volumes:
   #     - "./data/server:/data"
   #     - ~/.cache/huggingface:/app/huggingface_cache
-
   #   networks:
   #     - shared-network
 
