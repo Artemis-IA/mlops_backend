@@ -48,12 +48,12 @@ scrape_configs:
   - job_name: 'fastapi'
     metrics_path: '/metrics'
     static_configs:
-      - targets: ['192.168.1.106:8008']
+      - targets: ['host.docker.internal:8008']
 
   - job_name: 'codecarbon'
     metrics_path: '/metrics'
     static_configs:
-      - targets: ['192.168.1.106:8002']  # Intégré dans FastAPI sur le port 8002
+      - targets: ['host.docker.internal:8002']  # Intégré dans FastAPI sur le port 8002
         labels:
           component: 'codecarbon_tracker'
 

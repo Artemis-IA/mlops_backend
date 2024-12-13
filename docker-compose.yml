@@ -204,6 +204,8 @@ services:
     container_name: prometheus
     volumes:
       - ./metrics/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./metrics/alert_rules.yml:/etc/prometheus/alert_rules.yml
+
     ports:
       - ${PROMETHEUS_PORT}:${PROMETHEUS_PORT}
     networks:

@@ -40,3 +40,13 @@ groups:
         annotations:
           summary: "Application non disponible"
           description: "L'une des applications surveillées ne répond pas."
+
+      # Alerte : Requêtes sur la route /redoc détectées
+      - alert: RedocRouteAccessed
+        expr: rate(http_requests_total{path="/redoc"}[1m]) > 0
+        for: 1m
+        labels:
+          severity: info
+        annotations:
+          summary: "Accès à la route /redoc détecté"
+          description: "Une ou plusieurs requêtes ont été effectuées sur la route /redoc dans l'API FastAPI."

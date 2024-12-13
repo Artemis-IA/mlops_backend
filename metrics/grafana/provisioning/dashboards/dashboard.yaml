@@ -17,3 +17,11 @@ providers:
     editable: true
     options:
       path: /etc/grafana/provisioning/dashboards/neo4j
+
+  - name: 'Weavestruct Dashboards'
+    orgId: 1
+    folder: 'Weavestruct'
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
