@@ -31,7 +31,8 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
-
+postgresql.conf
+neo4j_exporter/neo4j.conf
 # PyInstaller
 *.manifest
 *.spec
