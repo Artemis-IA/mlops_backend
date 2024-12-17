@@ -108,11 +108,14 @@ services:
       - ${NEO4J_BOLT_PORT}:${NEO4J_BOLT_PORT}
     environment:
       - NEO4J_AUTH=${NEO4J_AUTH}
-
       - NEO4J_PLUGINS=["apoc"]
+      - NEO4J_dbms_security_procedures_unrestricted=apoc.*
+      - NEO4J_dbms_security_procedures_allowlist=apoc.*
+
     volumes:
       - neo4j_data:/data
       - neo4j_logs:/logs
+      
     networks:
       - shared-network
     extra_hosts:
@@ -175,18 +178,26 @@ services:
     env_file:
       - .env
     environment:
+      - COLLECT_ANALYTICS=False
+      - DJANGO_ALLOWED_HOSTS=
       - LABEL_STUDIO_PORT=${LABEL_STUDIO_PORT}
       - LABEL_STUDIO_BUCKET_ENDPOINT_URL=${LABEL_STUDIO_BUCKET_ENDPOINT_URL}
       - LABEL_STUDIO_BUCKET_ACCESS_KEY=${LABEL_STUDIO_BUCKET_ACCESS_KEY}
       - LABEL_STUDIO_BUCKET_SECRET_KEY=${LABEL_STUDIO_BUCKET_SECRET_KEY}
       - LABEL_STUDIO_ROOT_URL=/labelstudio/
-      - DJANGO_CSRF_TRUSTED_ORIGINS=${LABEL_STUDIO_HOST}
-      - CSRF_COOKIE_SECURE=1
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
+      - LABEL_STUDIO_HOST=${LABEL_STUDIO_HOST}
+      - CSRF_COOKIE_SECURE=${CSRF_COOKIE_SECURE}
+      - SECURE_PROXY_SSL_HEADER=${DJANGO_SECURE_PROXY_SSL_HEADER}
+      - USE_X_FORWARDED_HOST=${DJANGO_USE_X_FORWARDED_HOST}
       - POSTGRE_HOST=${POSTGRE_HOST}
       - POSTGRE_PORT=${POSTGRE_PORT}
       - POSTGRE_USER=${POSTGRE_USER}
       - POSTGRE_PASSWORD=${POSTGRE_PASSWORD}
       - POSTGRE_DB=${POSTGRE_DB}
+      - LABEL_STUDIO_DISABLE_SIGNUP_WITHOUT_LINK=true
+      - LABEL_STUDIO_USER_TOKEN=${LABEL_STUDIO_USER_TOKEN}
     ports:
       - "${LABEL_STUDIO_PORT}:${LABEL_STUDIO_PORT}"
     volumes:
